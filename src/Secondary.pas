@@ -141,6 +141,7 @@ begin
   end;
 
   // Remplir les mémos
+  (*
   memoStr := GenericText + sLineBreak + sLineBreak +
                   GenericText + sLineBreak + sLineBreak  +
                   GenericText + sLineBreak + sLineBreak  +
@@ -148,10 +149,11 @@ begin
                   GenericText + sLineBreak + sLineBreak  +
                   GenericText + sLineBreak + sLineBreak;
 
-  Memo1.lines.add(memoStr);
-  Memo2.Lines.Add(memoStr);
-  Memo3.Lines.Add(memoStr);
-  Memo4.Lines.Add(memoStr);
+//  Memo1.lines.add(memoStr);
+//  Memo2.Lines.Add(memoStr);
+//  Memo3.Lines.Add(memoStr);
+//  Memo4.Lines.Add(memoStr);
+*)
 end;
 
 procedure TDetailForm.BackToMainForm(Sender: TObject);
