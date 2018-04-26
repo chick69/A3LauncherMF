@@ -5,7 +5,9 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   MainForm in '..\src\MainForm.pas' {GridForm},
-  Secondary in '..\src\Secondary.pas' {DetailForm};
+  Secondary in '..\src\Secondary.pas' {DetailForm},
+  UGestAddons in '..\src\UGestAddons.pas' {DetailAddons},
+  UUtils in '..\src\UUtils.pas';
 
 {$R *.res}
 
@@ -17,5 +19,6 @@ begin
   Application.Title := 'Metropolis UI Application';
   Application.CreateForm(TGridForm, GridForm);
   Application.CreateForm(TDetailForm, DetailForm);
+  Application.CreateForm(TDetailAddons, DetailAddons);
   Application.Run;
 end.

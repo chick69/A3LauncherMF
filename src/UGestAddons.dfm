@@ -1,8 +1,8 @@
-object DetailForm: TDetailForm
+object DetailAddons: TDetailAddons
   Left = 0
   Top = 0
   BorderStyle = bsNone
-  Caption = 'DetailForm'
+  Caption = 'DetailAddons'
   ClientHeight = 1000
   ClientWidth = 2000
   Color = clBtnFace
@@ -31,13 +31,12 @@ object DetailForm: TDetailForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = -6
     object TitleLabel: TLabel
       Left = 120
       Top = 42
-      Width = 721
+      Width = 959
       Height = 74
-      Caption = 'Gestion des options du lanceur'
+      Caption = 'Gestion des addons pour les serveurs MF'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -56
@@ -315,12 +314,13 @@ object DetailForm: TDetailForm
     ParentColor = False
     TabOrder = 2
     Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanInertia, igoParentPassthrough]
-    object Label1: TLabel
+    ExplicitTop = 134
+    object LEMPLADDONS: TLabel
       Left = 104
       Top = 25
-      Width = 261
+      Width = 207
       Height = 18
-      Caption = 'Emplacement de l'#39'executable Arma III'
+      Caption = 'Emplacement des addons MF'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
@@ -329,7 +329,7 @@ object DetailForm: TDetailForm
       ParentFont = False
     end
     object SBSelRepert: TSpeedButton
-      Left = 1018
+      Left = 969
       Top = 21
       Width = 20
       Height = 26
@@ -342,199 +342,8 @@ object DetailForm: TDetailForm
       ParentFont = False
       OnClick = SBSelRepertClick
     end
-    object GBArma: TGroupBox
-      Left = 104
-      Top = 90
-      Width = 950
-      Height = 231
-      Caption = 'Options Lancement ARMA'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Cambria'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 0
-      object CBProfile: TCheckBox
-        Left = 32
-        Top = 32
-        Width = 65
-        Height = 17
-        Caption = 'Profil'
-        TabOrder = 0
-      end
-      object CBProfileName: TComboBox
-        Left = 116
-        Top = 28
-        Width = 145
-        Height = 25
-        TabOrder = 1
-      end
-      object CBERRORS: TCheckBox
-        Left = 32
-        Top = 59
-        Width = 201
-        Height = 17
-        Caption = 'Voir les erreurs de scripts'
-        TabOrder = 2
-      end
-      object CBNOPAUSE: TCheckBox
-        Left = 32
-        Top = 82
-        Width = 97
-        Height = 17
-        Caption = 'Sans Pause'
-        TabOrder = 3
-      end
-      object CBWINDOWED: TCheckBox
-        Left = 32
-        Top = 105
-        Width = 121
-        Height = 17
-        Caption = 'Mode fenetr'#233
-        TabOrder = 4
-      end
-      object CBFILEPACHING: TCheckBox
-        Left = 32
-        Top = 128
-        Width = 121
-        Height = 17
-        Caption = 'File Patching'
-        TabOrder = 5
-      end
-      object CBCHECKSIGN: TCheckBox
-        Left = 32
-        Top = 151
-        Width = 169
-        Height = 17
-        Caption = 'Verifier signatures'
-        TabOrder = 6
-      end
-      object CBENABLEBATTLEYE: TCheckBox
-        Left = 32
-        Top = 174
-        Width = 169
-        Height = 17
-        Caption = 'Activer Battleye'
-        TabOrder = 7
-      end
-      object CBRESTART: TCheckBox
-        Left = 32
-        Top = 197
-        Width = 169
-        Height = 17
-        Caption = 'Restart Automatique'
-        TabOrder = 8
-      end
-    end
-    object GBOptimisations: TGroupBox
-      Left = 104
-      Top = 352
-      Width = 950
-      Height = 273
-      Caption = 'Optimisations'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'Cambria'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 1
-      object CBMem: TCheckBox
-        Left = 32
-        Top = 43
-        Width = 201
-        Height = 17
-        Caption = 'Mem Memory'
-        TabOrder = 0
-      end
-      object CBCPU: TCheckBox
-        Left = 32
-        Top = 72
-        Width = 201
-        Height = 17
-        Caption = 'CPU Count'
-        TabOrder = 1
-      end
-      object CEXthreads: TCheckBox
-        Left = 32
-        Top = 103
-        Width = 201
-        Height = 17
-        Caption = 'ExThreads'
-        TabOrder = 2
-      end
-      object CMALLOC: TCheckBox
-        Left = 32
-        Top = 134
-        Width = 201
-        Height = 17
-        Caption = 'Malloc'
-        TabOrder = 3
-      end
-      object CheckBox5: TCheckBox
-        Left = 32
-        Top = 168
-        Width = 201
-        Height = 17
-        Caption = 'Enable HT'
-        TabOrder = 4
-      end
-      object CheckBox6: TCheckBox
-        Left = 32
-        Top = 191
-        Width = 201
-        Height = 17
-        Caption = 'No Splash Screen'
-        TabOrder = 5
-      end
-      object CBTHREADS: TCheckBox
-        Left = 32
-        Top = 214
-        Width = 201
-        Height = 17
-        Caption = 'Default World Emlty'
-        TabOrder = 6
-      end
-      object CheckBox8: TCheckBox
-        Left = 32
-        Top = 237
-        Width = 201
-        Height = 17
-        Caption = 'No Logs'
-        TabOrder = 7
-      end
-      object CBMEMALLOUE: TComboBox
-        Left = 188
-        Top = 37
-        Width = 145
-        Height = 27
-        TabOrder = 8
-      end
-      object SELNBCORES: TComboBox
-        Left = 188
-        Top = 67
-        Width = 145
-        Height = 27
-        TabOrder = 9
-      end
-      object ComboBox3: TComboBox
-        Left = 188
-        Top = 98
-        Width = 145
-        Height = 27
-        TabOrder = 10
-      end
-      object CBMALLOC: TComboBox
-        Left = 188
-        Top = 129
-        Width = 145
-        Height = 27
-        TabOrder = 11
-      end
-    end
-    object EmplArma: TEdit
-      Left = 379
+    object EMPLADDONS: TEdit
+      Left = 330
       Top = 21
       Width = 638
       Height = 26
@@ -544,7 +353,7 @@ object DetailForm: TDetailForm
       Font.Name = 'Arial'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 0
     end
   end
   object GestureManager1: TGestureManager

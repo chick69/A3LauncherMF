@@ -1,4 +1,4 @@
-unit Secondary;
+unit UGestAddons;
 
 interface
 
@@ -7,13 +7,11 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Actions, Vcl.ActnList,
   Vcl.Styles, Vcl.Themes, Vcl.Touch.GestureMgr, Vcl.Buttons
-{$IFDEF WINDOWS}
   ,Vcl.FileCtrl
-{$ENDIF}
   ;
 
 type
-  TDetailForm = class(TForm)
+  TDetailAddons = class(TForm)
     Panel1: TPanel;
     TitleLabel: TLabel;
     Image1: TImage;
@@ -23,32 +21,9 @@ type
     Action1: TAction;
     CloseButton: TImage;
     ScrollBox1: TScrollBox;
-    GBArma: TGroupBox;
-    GBOptimisations: TGroupBox;
-    EmplArma: TEdit;
-    Label1: TLabel;
+    LEMPLADDONS: TLabel;
+    EMPLADDONS: TEdit;
     SBSelRepert: TSpeedButton;
-    CBProfile: TCheckBox;
-    CBProfileName: TComboBox;
-    CBERRORS: TCheckBox;
-    CBNOPAUSE: TCheckBox;
-    CBWINDOWED: TCheckBox;
-    CBFILEPACHING: TCheckBox;
-    CBCHECKSIGN: TCheckBox;
-    CBENABLEBATTLEYE: TCheckBox;
-    CBRESTART: TCheckBox;
-    CBMem: TCheckBox;
-    CBCPU: TCheckBox;
-    CEXthreads: TCheckBox;
-    CMALLOC: TCheckBox;
-    CheckBox5: TCheckBox;
-    CheckBox6: TCheckBox;
-    CBTHREADS: TCheckBox;
-    CheckBox8: TCheckBox;
-    CBMEMALLOUE: TComboBox;
-    SELNBCORES: TComboBox;
-    ComboBox3: TComboBox;
-    CBMALLOC: TComboBox;
     procedure BackToMainForm(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -60,8 +35,6 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure SBSelRepertClick(Sender: TObject);
   private
-  	NbCores : integer;
-    maxMemory : integer;
     { Déclarations privées }
     procedure AppBarResize;
     procedure AppBarShow(mode: integer);
@@ -69,7 +42,7 @@ type
     { Déclarations publiques }
   end;
 
-  var  DetailForm : TdetailForm;
+  var  DetailAddons : TDetailAddons;
 
 implementation
 uses MainForm,UUtils;
@@ -78,7 +51,7 @@ uses MainForm,UUtils;
 {$R *.dfm}
 
 
-procedure TDetailForm.Action1Execute(Sender: TObject);
+procedure TDetailAddons.Action1Execute(Sender: TObject);
 begin
   AppBarShow(-1);
 end;
@@ -86,13 +59,13 @@ end;
 const
   AppBarHeight = 75;
 
-procedure TDetailForm.AppBarResize;
+procedure TDetailAddons.AppBarResize;
 begin
   AppBar.SetBounds(0, AppBar.Parent.Height - AppBarHeight,
     AppBar.Parent.Width, AppBarHeight);
 end;
 
-procedure TDetailForm.AppBarShow(mode: integer);
+procedure TDetailAddons.AppBarShow(mode: integer);
 begin
   if mode = -1 then // Basculer
     mode := integer(not AppBar.Visible );
@@ -106,12 +79,12 @@ begin
   end;
 end;
 
-procedure TDetailForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+procedure TDetailAddons.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
 	//
 end;
 
-procedure TDetailForm.FormCreate(Sender: TObject);
+procedure TDetailAddons.FormCreate(Sender: TObject);
 var
   LStyle: TCustomStyleServices;
   MemoColor, MemoFontColor: TColor;
@@ -123,13 +96,13 @@ begin
 
 end;
 
-procedure TDetailForm.FormGesture(Sender: TObject;
+procedure TDetailAddons.FormGesture(Sender: TObject;
   const EventInfo: TGestureEventInfo; var Handled: Boolean);
 begin
   AppBarShow(0);
 end;
 
-procedure TDetailForm.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TDetailAddons.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if Key = VK_ESCAPE then
@@ -138,24 +111,16 @@ begin
     AppBarShow(0);
 end;
 
-procedure TDetailForm.FormResize(Sender: TObject);
+procedure TDetailAddons.FormResize(Sender: TObject);
 begin
   AppBarResize;
 end;
 
-procedure TDetailForm.FormShow(Sender: TObject);
+procedure TDetailAddons.FormShow(Sender: TObject);
 var
   GroupElements: TStringList;
-  II : integer;
 begin
   AppBarShow(0);
-  
-  NbCores := System.CPUCount;
-  for II := 1 to nbCores do
-  begin
-  	SELNBCORES.Items.Add(inttoStr(II)) ;
-  end;
-  //   
   // Afficher le titre du badge d'origine
   GroupElements:= TStringList.Create;
   try
@@ -166,17 +131,17 @@ begin
   end;
 end;
 
-procedure TDetailForm.SBSelRepertClick(Sender: TObject);
+procedure TDetailAddons.SBSelRepertClick(Sender: TObject);
 var TT : string;
 begin
 	TT :=  SelectionneRepert (ExtractFilePath(Application.ExeName));
   if TT <> ''  then
   begin
-		EmplArma.Text := TT;  
+		EMPLADDONS.Text := TT;  
   end;
 end;
 
-procedure TDetailForm.BackToMainForm(Sender: TObject);
+procedure TDetailAddons.BackToMainForm(Sender: TObject);
 begin
   Hide;
   GridForm.BringToFront;

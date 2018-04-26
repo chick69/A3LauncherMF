@@ -31,7 +31,7 @@ type
     GroupPanel2_1: TPanel;
     Label8: TLabel;
     Label9: TLabel;
-    Image4: TImage;
+    ImgParam: TImage;
     Panel2: TPanel;
     GroupPanel2_2: TPanel;
     Panel3: TPanel;
@@ -70,7 +70,6 @@ type
     AresStateRed: TImage;
     AresStateGreen: TImage;
     procedure ScrollBox2Resize(Sender: TObject);
-    procedure GroupPanel1_1Click(Sender: TObject);
     procedure Image11Click(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -80,6 +79,8 @@ type
       var Handled: Boolean);
     procedure Image6Click(Sender: TObject);
     procedure Image7Click(Sender: TObject);
+    procedure ImgParamClick(Sender: TObject);
+    procedure Image5Click(Sender: TObject);
   private
     AddonsServal : string;
     AddonsAres : string;
@@ -101,7 +102,7 @@ implementation
 
 {$R *.dfm}
 
-uses Secondary;
+uses Secondary, UGestAddons;
 
 const
   AppBarHeight = 75;
@@ -157,19 +158,17 @@ begin
   AppBarShow(0);
 end;
 
-procedure TGridForm.GroupPanel1_1Click(Sender: TObject);
-begin
-  // Supposer ici que l'image sera cliquée
-  SelectedGroup := TPanel(TControl(Sender).Parent).Name;
-  if not Assigned(DetailForm) then
-    DetailForm := TDetailForm.Create(Self);
-  DetailForm.Show;
-  DetailForm.BringToFront;
-end;
-
 procedure TGridForm.Image11Click(Sender: TObject);
 begin
   Application.Terminate;
+end;
+
+procedure TGridForm.Image5Click(Sender: TObject);
+begin
+  if not Assigned(DetailAddons) then
+    DetailAddons := TDetailAddons.Create(Self);
+  DetailAddons.Show;
+  DetailAddons.BringToFront;
 end;
 
 procedure TGridForm.Image6Click(Sender: TObject);
@@ -180,6 +179,14 @@ end;
 procedure TGridForm.Image7Click(Sender: TObject);
 begin
   ShellExecute (Application.Handle,'OPEN','http://mercenaires-francais.fr',nil,nil,SW_SHOWDEFAULT);
+end;
+
+procedure TGridForm.ImgParamClick(Sender: TObject);
+begin
+  if not Assigned(DetailForm) then
+    DetailForm := TDetailForm.Create(Self);
+  DetailForm.Show;
+  DetailForm.BringToFront;
 end;
 
 procedure TGridForm.PickImageColor(img: TImage; AColor: TColor);

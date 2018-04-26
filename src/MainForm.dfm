@@ -54,7 +54,6 @@ object GridForm: TGridForm
         BorderWidth = 5
         FlowStyle = fsTopBottomLeftRight
         TabOrder = 0
-        ExplicitTop = 78
         object GroupPanel1_1: TPanel
           Left = 5
           Top = 5
@@ -63,7 +62,6 @@ object GridForm: TGridForm
           BevelOuter = bvNone
           BorderWidth = 5
           TabOrder = 0
-          OnClick = GroupPanel1_1Click
           object Image1: TImage
             Left = 5
             Top = 5
@@ -4813,7 +4811,6 @@ object GridForm: TGridForm
               075DD7D8FDFB2207062FADF0248C22BCCB8D9D9ABD5BB7327AECB6AB0FD2FF07
               D95D102C0344AB940000000049454E44AE426082}
             Proportional = True
-            OnClick = GroupPanel1_1Click
             ExplicitLeft = 2
           end
           object Panel5: TPanel
@@ -22238,7 +22235,6 @@ object GridForm: TGridForm
               15CBE3980B56CBDC1BC45A0103A8FACC5034A3C9CB38FD0C9F23C04C7A5EDA58
               4308C468038EFAA6C2CA82F45B2539F8B6DBB56AD3A4BF9A67E2FFFF01128E0D
               7F45A187EE0000000049454E44AE426082}
-            OnClick = GroupPanel1_1Click
             ExplicitLeft = 2
           end
           object Panel6: TPanel
@@ -37989,7 +37985,6 @@ object GridForm: TGridForm
               D5E2A658AFC9E0BC2F43EDF49688BD88CBCB298B8FCE469945DD78E213E17E7C
               36D2BC31E1FB90CC6282669034A16CB3D0849F441EC7DEFF3FE0B64770157D97
               2D0000000049454E44AE426082}
-            OnClick = GroupPanel1_1Click
             ExplicitLeft = 6
           end
           object Panel4: TPanel
@@ -38094,7 +38089,7 @@ object GridForm: TGridForm
           BevelOuter = bvNone
           BorderWidth = 5
           TabOrder = 0
-          object Image4: TImage
+          object ImgParam: TImage
             Left = 5
             Top = 5
             Width = 240
@@ -38255,7 +38250,7 @@ object GridForm: TGridForm
               7A20AD184E7D4495FA4663A2ACECFF05EF693767AD524AD20000000049454E44
               AE426082}
             Proportional = True
-            OnClick = GroupPanel1_1Click
+            OnClick = ImgParamClick
           end
           object Panel2: TPanel
             Left = 5
@@ -38996,7 +38991,7 @@ object GridForm: TGridForm
               C4D9129622178D30180C159119512D6F403E080BE4A62106836125644E56E0FF
               01807790817E8622C60000000049454E44AE426082}
             Proportional = True
-            OnClick = GroupPanel1_1Click
+            OnClick = Image5Click
           end
           object Panel3: TPanel
             Left = 5
