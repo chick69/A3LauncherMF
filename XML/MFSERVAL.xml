@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<EntryServers>
+	<Server>
+		<Name>Serval</Name>
+		<State>1</State>
+		<Addons>
+			<Addon>
+			<AddonFile>@EM.zip</AddonFile>
+			<AddonName>@EM</AddonName>
+			<AddonVersion>6.4</AddonVersion>
+			</Addon>
+			<Addon>
+			<AddonFile>@CBA.zip</AddonFile>
+			<AddonName>@CBA</AddonName>
+			<AddonVersion>6.5</AddonVersion>
+			</Addon>
+		</Addons>
+	</Server>
+</EntryServers>

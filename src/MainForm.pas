@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, Vcl.ImgList, System.Actions,
-  Vcl.ActnList, Vcl.Touch.GestureMgr,Shellapi;
+  Vcl.ActnList, Vcl.Touch.GestureMgr,Shellapi,UUtils;
 
 type
   TGridForm = class(TForm)
@@ -81,7 +81,9 @@ type
     procedure Image7Click(Sender: TObject);
     procedure ImgParamClick(Sender: TObject);
     procedure Image5Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
+  	GameEnv : TGameEnv;
     AddonsServal : string;
     AddonsAres : string;
     { Déclarations privées }
@@ -132,6 +134,11 @@ begin
   AppBarShow(-1);
 end;
 
+procedure TGridForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+	GameEnv.Free;
+end;
+
 procedure TGridForm.FormGesture(Sender: TObject;
   const EventInfo: TGestureEventInfo; var Handled: Boolean);
 begin
@@ -154,7 +161,8 @@ end;
 
 procedure TGridForm.FormShow(Sender: TObject);
 begin
-  AddonsServal := '';
+	GameEnv := TGameEnv.create;
+  
   AppBarShow(0);
 end;
 

@@ -16,6 +16,7 @@ object GridForm: TGridForm
   Position = poDesigned
   Touch.GestureManager = GestureManager1
   WindowState = wsMaximized
+  OnClose = FormClose
   OnGesture = FormGesture
   OnKeyDown = FormKeyDown
   OnResize = FormResize
@@ -54,6 +55,7 @@ object GridForm: TGridForm
         BorderWidth = 5
         FlowStyle = fsTopBottomLeftRight
         TabOrder = 0
+        ExplicitTop = 78
         object GroupPanel1_1: TPanel
           Left = 5
           Top = 5
@@ -16900,6 +16902,7 @@ object GridForm: TGridForm
                 000049454E44AE426082}
               Proportional = True
               Stretch = True
+              Visible = False
             end
           end
         end
@@ -34324,6 +34327,7 @@ object GridForm: TGridForm
                 000049454E44AE426082}
               Proportional = True
               Stretch = True
+              Visible = False
             end
           end
         end
