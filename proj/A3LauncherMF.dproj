@@ -94,6 +94,7 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <VerInfo_Keys>CompanyName=Mercenaires Francais;FileDescription=Launcher ARMA III;FileVersion=1.0.0.0;InternalName=;LegalCopyright=© Mercenaires Français;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=By Chick69</VerInfo_Keys>
         <DCC_DcuOutput>C:\Projets\A3LauncherMF\dcudbg\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\Projets\A3LauncherMF\binDbg\</DCC_ExeOutput>
         <Icon_MainIcon>A3LauncherMF_Icon.ico</Icon_MainIcon>

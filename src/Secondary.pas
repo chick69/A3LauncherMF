@@ -149,12 +149,15 @@ var
   II : integer;
 begin
   AppBarShow(0);
-  
   NbCores := System.CPUCount;
   for II := 1 to nbCores do
   begin
   	SELNBCORES.Items.Add(inttoStr(II)) ;
   end;
+{$IFDEF WIN32}
+{$ENDIF}
+{$IFDEF WIN64}
+{$ENDIF}  
   //   
   // Afficher le titre du badge d'origine
   GroupElements:= TStringList.Create;

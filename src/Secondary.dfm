@@ -31,7 +31,6 @@ object DetailForm: TDetailForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = -6
     object TitleLabel: TLabel
       Left = 120
       Top = 42
@@ -445,7 +444,7 @@ object DetailForm: TDetailForm
         Top = 43
         Width = 201
         Height = 17
-        Caption = 'Mem Memory'
+        Caption = 'Max Memory'
         TabOrder = 0
       end
       object CBCPU: TCheckBox

@@ -16,7 +16,7 @@ begin
   Application.UseMetropolisUI;
   Application.MainFormOnTaskbar := True;
   TStyleManager.TrySetStyle('Metropolis UI Blue');
-  Application.Title := 'Metropolis UI Application';
+  Application.Title := 'Launcher Arma III mercenaires Français';
   Application.CreateForm(TGridForm, GridForm);
   Application.CreateForm(TDetailForm, DetailForm);
   Application.CreateForm(TDetailAddons, DetailAddons);
