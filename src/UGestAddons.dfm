@@ -314,47 +314,6 @@ object DetailAddons: TDetailAddons
     ParentColor = False
     TabOrder = 2
     Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanInertia, igoParentPassthrough]
-    ExplicitTop = 134
-    object LEMPLADDONS: TLabel
-      Left = 104
-      Top = 25
-      Width = 207
-      Height = 18
-      Caption = 'Emplacement des addons MF'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Arial'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object SBSelRepert: TSpeedButton
-      Left = 969
-      Top = 21
-      Width = 20
-      Height = 26
-      Caption = '...'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Cambria'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = SBSelRepertClick
-    end
-    object EMPLADDONS: TEdit
-      Left = 330
-      Top = 21
-      Width = 638
-      Height = 26
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Arial'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 0
-    end
   end
   object GestureManager1: TGestureManager
     Left = 48

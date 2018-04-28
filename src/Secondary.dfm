@@ -314,6 +314,7 @@ object DetailForm: TDetailForm
     ParentColor = False
     TabOrder = 2
     Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanInertia, igoParentPassthrough]
+    ExplicitTop = 134
     object Label1: TLabel
       Left = 104
       Top = 25
@@ -340,6 +341,33 @@ object DetailForm: TDetailForm
       Font.Style = [fsBold]
       ParentFont = False
       OnClick = SBSelRepertClick
+    end
+    object LEMPLADDONS: TLabel
+      Left = 112
+      Top = 656
+      Width = 207
+      Height = 18
+      Caption = 'Emplacement des addons MF'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object SelAddons: TSpeedButton
+      Left = 969
+      Top = 653
+      Width = 20
+      Height = 26
+      Caption = '...'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Cambria'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = SelAddonsClick
     end
     object GBArma: TGroupBox
       Left = 104
@@ -374,7 +402,7 @@ object DetailForm: TDetailForm
         Top = 59
         Width = 201
         Height = 17
-        Caption = 'Voir les erreurs de scripts'
+        Caption = 'Show Errors'
         TabOrder = 2
       end
       object CBNOPAUSE: TCheckBox
@@ -382,15 +410,15 @@ object DetailForm: TDetailForm
         Top = 82
         Width = 97
         Height = 17
-        Caption = 'Sans Pause'
+        Caption = 'No Pause'
         TabOrder = 3
       end
       object CBWINDOWED: TCheckBox
         Left = 32
         Top = 105
-        Width = 121
+        Width = 153
         Height = 17
-        Caption = 'Mode fenetr'#233
+        Caption = 'Windowed Mode'
         TabOrder = 4
       end
       object CBFILEPACHING: TCheckBox
@@ -406,7 +434,7 @@ object DetailForm: TDetailForm
         Top = 151
         Width = 169
         Height = 17
-        Caption = 'Verifier signatures'
+        Caption = 'Check Signatures'
         TabOrder = 6
       end
       object CBENABLEBATTLEYE: TCheckBox
@@ -414,7 +442,7 @@ object DetailForm: TDetailForm
         Top = 174
         Width = 169
         Height = 17
-        Caption = 'Activer Battleye'
+        Caption = 'Enable Battleye'
         TabOrder = 7
       end
       object CBRESTART: TCheckBox
@@ -422,7 +450,7 @@ object DetailForm: TDetailForm
         Top = 197
         Width = 169
         Height = 17
-        Caption = 'Restart Automatique'
+        Caption = 'Auto restart'
         TabOrder = 8
       end
     end
@@ -471,7 +499,7 @@ object DetailForm: TDetailForm
         Caption = 'Malloc'
         TabOrder = 3
       end
-      object CheckBox5: TCheckBox
+      object CBEnabledHT: TCheckBox
         Left = 32
         Top = 168
         Width = 201
@@ -479,7 +507,7 @@ object DetailForm: TDetailForm
         Caption = 'Enable HT'
         TabOrder = 4
       end
-      object CheckBox6: TCheckBox
+      object CBNoSplash: TCheckBox
         Left = 32
         Top = 191
         Width = 201
@@ -487,7 +515,7 @@ object DetailForm: TDetailForm
         Caption = 'No Splash Screen'
         TabOrder = 5
       end
-      object CBTHREADS: TCheckBox
+      object CBWorldEmpty: TCheckBox
         Left = 32
         Top = 214
         Width = 201
@@ -495,7 +523,7 @@ object DetailForm: TDetailForm
         Caption = 'Default World Emlty'
         TabOrder = 6
       end
-      object CheckBox8: TCheckBox
+      object CBNologs: TCheckBox
         Left = 32
         Top = 237
         Width = 201
@@ -517,9 +545,9 @@ object DetailForm: TDetailForm
         Height = 27
         TabOrder = 9
       end
-      object ComboBox3: TComboBox
+      object CBNbEXthreads: TComboBox
         Left = 188
-        Top = 98
+        Top = 96
         Width = 145
         Height = 27
         TabOrder = 10
@@ -544,6 +572,19 @@ object DetailForm: TDetailForm
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
+    end
+    object EMPLADDONS: TEdit
+      Left = 330
+      Top = 653
+      Width = 638
+      Height = 26
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Arial'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 3
     end
   end
   object GestureManager1: TGestureManager

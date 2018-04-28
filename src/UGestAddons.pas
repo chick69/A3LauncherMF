@@ -21,9 +21,6 @@ type
     Action1: TAction;
     CloseButton: TImage;
     ScrollBox1: TScrollBox;
-    LEMPLADDONS: TLabel;
-    EMPLADDONS: TEdit;
-    SBSelRepert: TSpeedButton;
     procedure BackToMainForm(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -33,7 +30,6 @@ type
     procedure FormGesture(Sender: TObject; const EventInfo: TGestureEventInfo;
       var Handled: Boolean);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure SBSelRepertClick(Sender: TObject);
   private
     { Déclarations privées }
     procedure AppBarResize;
@@ -117,28 +113,8 @@ begin
 end;
 
 procedure TDetailAddons.FormShow(Sender: TObject);
-var
-  GroupElements: TStringList;
 begin
   AppBarShow(0);
-  // Afficher le titre du badge d'origine
-  GroupElements:= TStringList.Create;
-  try
-    GroupElements.Delimiter := '_';
-    GroupElements.DelimitedText := GridForm.SelectedGroup;
-  finally
-    GroupElements.Free;
-  end;
-end;
-
-procedure TDetailAddons.SBSelRepertClick(Sender: TObject);
-var TT : string;
-begin
-	TT :=  SelectionneRepert (ExtractFilePath(Application.ExeName));
-  if TT <> ''  then
-  begin
-		EMPLADDONS.Text := TT;  
-  end;
 end;
 
 procedure TDetailAddons.BackToMainForm(Sender: TObject);

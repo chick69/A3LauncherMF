@@ -83,9 +83,6 @@ type
     procedure Image5Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
-  	GameEnv : TGameEnv;
-    AddonsServal : string;
-    AddonsAres : string;
     { Déclarations privées }
     procedure AppBarResize;
     procedure AppBarShow(mode: integer);
@@ -99,6 +96,7 @@ type
 
 var
   GridForm: TGridForm;
+  GameEnv : TGameEnv;
 
 implementation
 

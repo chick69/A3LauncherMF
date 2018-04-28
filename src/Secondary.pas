@@ -41,14 +41,17 @@ type
     CBCPU: TCheckBox;
     CEXthreads: TCheckBox;
     CMALLOC: TCheckBox;
-    CheckBox5: TCheckBox;
-    CheckBox6: TCheckBox;
-    CBTHREADS: TCheckBox;
-    CheckBox8: TCheckBox;
+    CBEnabledHT: TCheckBox;
+    CBNoSplash: TCheckBox;
+    CBWorldEmpty: TCheckBox;
+    CBNologs: TCheckBox;
     CBMEMALLOUE: TComboBox;
     SELNBCORES: TComboBox;
-    ComboBox3: TComboBox;
+    CBNbEXthreads: TComboBox;
     CBMALLOC: TComboBox;
+    LEMPLADDONS: TLabel;
+    EMPLADDONS: TEdit;
+    SelAddons: TSpeedButton;
     procedure BackToMainForm(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -59,12 +62,15 @@ type
       var Handled: Boolean);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure SBSelRepertClick(Sender: TObject);
+    procedure  SaveParams;
+    procedure SelAddonsClick(Sender: TObject);
+
   private
   	NbCores : integer;
-    maxMemory : integer;
     { Déclarations privées }
     procedure AppBarResize;
     procedure AppBarShow(mode: integer);
+    function GetMemDispo : integer;
   public
     { Déclarations publiques }
   end;
@@ -145,28 +151,52 @@ end;
 
 procedure TDetailForm.FormShow(Sender: TObject);
 var
-  GroupElements: TStringList;
   II : integer;
+  MaxDispo : integer;
+  CurMem : integer;
 begin
   AppBarShow(0);
+  //
   NbCores := System.CPUCount;
+  SELNBCORES.Items.Add('<<Défaut>>') ; SELNBCORES.ItemIndex := 0;
+  CBNbEXthreads.Items.Add('<<Défaut>>') ; CBNbEXthreads.ItemIndex := 0;
   for II := 1 to nbCores do
   begin
   	SELNBCORES.Items.Add(inttoStr(II)) ;
+    if odd(II) then CBNbEXthreads.Items.Add(inttoStr(II));
   end;
 {$IFDEF WIN32}
+  CBMEMALLOUE.Items.Clear;
+  CBMEMALLOUE.AddItem('<<Défaut>>',nil); CBMEMALLOUE.ItemIndex := 0;
+  CBMEMALLOUE.AddItem('1024',nil);
+  CBMEMALLOUE.AddItem('2047',nil);
 {$ENDIF}
 {$IFDEF WIN64}
-{$ENDIF}  
-  //   
-  // Afficher le titre du badge d'origine
-  GroupElements:= TStringList.Create;
-  try
-    GroupElements.Delimiter := '_';
-    GroupElements.DelimitedText := GridForm.SelectedGroup;
-  finally
-    GroupElements.Free;
+  MaxDispo := GetMemDispo;
+  CBMEMALLOUE.Items.Clear;
+  CBMEMALLOUE.AddItem('<<Défaut>>',nil); CBMEMALLOUE.ItemIndex := 0;
+  for II := 1 to 16 do
+  begin
+    CurMem := (II * 1024) - 1;
+    if MaxDispo > CurMem then CBMEMALLOUE.AddItem(InttoStr(Curmem),nil) else break;
   end;
+{$ENDIF}
+  CBMALLOC.Items.Clear;
+  CBMALLOC.AddItem('<<Défaut>>',nil); CBMALLOC.ItemIndex := 0;
+  //
+end;
+
+function TDetailForm.GetMemDispo: integer;
+Var Memory : TMemoryStatus;
+begin
+  Memory.dwLength:=SizeOf(Memory);
+  GlobalMemoryStatus(Memory);
+  result := (Memory.dwAvailPhys div 262144) div 5;
+end;
+
+procedure TDetailForm.SaveParams;
+begin
+  GameEnv.SaveParams;
 end;
 
 procedure TDetailForm.SBSelRepertClick(Sender: TObject);
@@ -179,8 +209,19 @@ begin
   end;
 end;
 
+procedure TDetailForm.SelAddonsClick(Sender: TObject);
+var TT : string;
+begin
+	TT :=  SelectionneRepert (ExtractFilePath(Application.ExeName));
+  if TT <> ''  then
+  begin
+		EMPLADDONS.Text := TT;
+  end;
+end;
+
 procedure TDetailForm.BackToMainForm(Sender: TObject);
 begin
+  SaveParams;
   Hide;
   GridForm.BringToFront;
 end;

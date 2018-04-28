@@ -6,7 +6,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Actions, Vcl.ActnList,
   Vcl.Styles, Vcl.Themes, Vcl.Touch.GestureMgr, Vcl.Buttons, Registry
-  ,Vcl.FileCtrl,System.IniFiles,XMLDOC, XMLIntf
+  ,Vcl.FileCtrl,System.IniFiles,XMLDOC, XMLIntf,Secondary
   ;
 
 const
@@ -41,14 +41,19 @@ type
   TServer = class (Tobject)
   private
     fName : string;
+    fAdress : string;
+    fPort : string;
     fStatus : boolean;
     fWithAddons : boolean;
     fAddonList : TaddonsList;
+    fAddonServer : TaddonsList;
     fGameServer : TGameServer;
   public
 		property Name : string read fName write fName;
     property Status : boolean read fStatus write fStatus;
     property WithAddons : boolean read fWithAddons write fWithAddons;
+    property ServerAddons : TaddonsList read fAddonServer;
+    property LocalAddons : TaddonsList read fAddonList;
     constructor create;
     destructor destroy; override;
   end;
@@ -89,23 +94,27 @@ type
     fServers : TserverList;
     //
     fLocalAppData : string;
+    ININame : string;
+
     //
     procedure DefiniEnv;
-    procedure SetTypeOS; 
+    procedure SetTypeOS;
     procedure GetStoredParams;
-    procedure StoreParams;
     procedure StockeInfoServeur(NomServeur: string);
+    procedure GetInfosFromForm;
+    procedure SetInfosToForm;
+    procedure SaveToFile;
+    function GetDefaultProfile : string;
+    function GetGameRepert : string;
 
-    
   public
   	constructor create;
     destructor destroy; override;
     procedure ConnectToServer (TheServer : string) ;
+    procedure SaveParams;
   end;
-  
+
 function SelectionneRepert (RepertDepart : string) : string;
-function GetDefaultProfile : string;
-function GetGameRepert : string;
 
 implementation
 
@@ -126,14 +135,42 @@ begin
   result := res;
 end;
 
-function GetGameRepert : string;
+function TGameEnv.GetGameRepert : string;
+var Reg : TRegistry;
+    res : string;
 begin
-
+  try
+    Reg := TRegistry.Create;
+    Reg.RootKey := HKEY_LOCAL_MACHINE;
+{$IFDEF WIN32}
+    if Reg.OpenKey('\SOFTWARE\bohemia interactive\arma 3', False)
+{$ELSE}
+    if Reg.OpenKey('\SOFTWARE\bohemia interactive\arma 3', False)
+{$ENDIF}
+    then BEGIN res := Reg.ReadString('main'); MessageBox(application.Handle,Pchar('Trouve'),'',MB_OK); END
+    else res := '';
+  finally
+    Reg.CloseKey;
+    Reg.Free;
+  end;
+  result := res;
 end;
 
-function GetDefaultProfile : string;
+function TGameEnv.GetDefaultProfile : string;
+var Reg : TRegistry;
+    res : string;
 begin
-
+  try
+    Reg := TRegistry.Create;
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey('\Software\Bohemia Interactive\Arma 3', False)
+    then res := Reg.ReadString('Player Name')
+    else res := '';
+  finally
+    Reg.CloseKey;
+    Reg.Free;
+  end;
+  result := res;
 end;
 
 function SelectionneRepert (RepertDepart : string) : string;
@@ -168,9 +205,10 @@ end;
 constructor TGameEnv.create;
 begin
 	fServers := TServerList.Create;
-	SetTypeOS; 
+	SetTypeOS;
   DefiniEnv;
 	GetStoredParams;
+  SetInfosToForm;
 end;
 
 procedure TGameEnv.DefiniEnv;
@@ -178,8 +216,9 @@ begin
 	fLocalAppData := IncludeTrailingBackslash(IncludeTrailingBackslash(GetSpecialFolder('Local AppData'))+'A3Launcher');
   if not DirectoryExists(fLocalAppData) then
   begin
-    CreateDir(fLocalAppData); 
+    CreateDir(fLocalAppData);
   end;
+  ININame := IncludeTrailingBackslash (fLocalAppData)+ ChangeFileExt( ExtractFileName(Application.ExeName), '.INI' );
 end;
 
 destructor TGameEnv.destroy;
@@ -243,12 +282,40 @@ begin
   end;
 end;
 
+procedure TGameEnv.GetInfosFromForm;
+begin
+  fDefautProfil := DetailForm.CBProfileName.Text;
+  fGameEmpl := DetailForm.EmplArma.Text;
+  fAddonsEmpl := DetailForm.EMPLADDONS.Text;
+  fShowErrors := detailForm.CBERRORS.Checked;
+  fNoPause :=  DetailForm.CBNOPAUSE.Checked;
+  fWindowed :=  DetailForm.CBWINDOWED.Checked;
+  fFilePatching := DetailForm.CBFILEPACHING.Checked;
+  fControleSig :=  DetailForm.CBCHECKSIGN.Checked;
+  fBEActive :=  DetailForm.CBENABLEBATTLEYE.Checked;
+  fRSAuto := DetailForm.CBRESTART.Checked;
+  // ---
+  if (DetailForm.CBMEMALLOUE.Text <> '<<Défaut>>') then fMaxMemory := StrToInt(DetailForm.CBMEMALLOUE.Text)
+                                                   else fMaxMemory := 0;
+  if DetailForm.SELNBCORES.Text <> '<<Défaut>>' then fNbCpu := StrToInt(DetailForm.SELNBCORES.Text)
+                                                else fNbCpu := 0;
+  if DetailForm.CBNbEXthreads.Text <> '<<Défaut>>'  then fExThreads := StrToInt(DetailForm.CBNbEXthreads.Text)
+                                                    else fExThreads := 0;
+  if (DetailForm.CBMALLOC.Text <> '<<Défaut>>') then fModeAlloc := DetailForm.CBMALLOC.Text
+                                                else fModeAlloc := '';
+
+  fEnableHT := DetailForm.CBEnabledHT.Checked;
+  fNoSplash := DetailForm.CBNoSplash.Checked;
+  fWorldEmpty := DetailForm.CBWorldEmpty.Checked;
+  fNoLogs :=  DetailForm.CBNologs.Checked;
+end;
+
 procedure TGameEnv.GetStoredParams;
 var LaunchIni : TIniFile;
 begin
-	if FileExists( ChangeFileExt( IncludeTrailingBackslash (fLocalAppData)+Application.ExeName, '.INI' )) then
+	if FileExists( ININame) then
   begin
-    LaunchIni := TIniFile.Create( ChangeFileExt( IncludeTrailingBackslash (fLocalAppData)+Application.ExeName, '.INI' ) );
+    LaunchIni := TIniFile.Create(ININame);
     TRY
       fDefautProfil := LaunchIni.ReadString('Launcher','ProfileName',GetDefaultProfile);
       fGameEmpl :=  LaunchIni.ReadString('Launcher','GameEmpl',GetGameRepert);
@@ -294,7 +361,7 @@ begin
     fWorldEmpty := true;
     fNoLogs := true;
   end;
-
+  // chargement de la configuration courante
   if FileExists (IncludeTrailingBackslash (fLocalAppData)+'MFSERVAL.xml') then
   begin
   	StockeInfoServeur ('MFSERVAL'); // sans Addons
@@ -310,6 +377,85 @@ begin
   
 end;
 
+procedure TGameEnv.SaveParams;
+begin
+  GetInfosFromForm;
+  SaveToFile;
+end;
+
+procedure TGameEnv.SaveToFile;
+var LaunchIni : TIniFile;
+    filehandle : integer;
+begin
+  if not FileExists(ININame ) then
+  begin
+    filehandle:=  FileOpen(ININame, fmOpenWrite);
+    FileClose(filehandle);
+  end;
+  LaunchIni := TIniFile.Create(ININame);
+  TRY
+    LaunchIni.WriteString('Launcher','ProfileName',fDefautProfil);
+    LaunchIni.WriteString('Launcher','GameEmpl',fGameEmpl);
+    LaunchIni.WriteString('Launcher','AddonsEmpl',fAddonsEmpl);
+    LaunchIni.WriteBool('Launcher','ShowErrors',fShowErrors);
+    LaunchIni.WriteBool('Launcher','NoPause',fNoPause);
+    LaunchIni.WriteBool('Launcher','Windowed',fWindowed);
+    LaunchIni.WriteBool('Launcher','FilePatching',fFilePatching);
+    LaunchIni.WriteBool('Launcher','SignControl',fControleSig);
+    LaunchIni.WriteBool('Launcher','ActiveBE',fBEActive);
+    LaunchIni.WriteBool('Launcher','RSAuto',fRSAuto);
+    // ---
+    LaunchIni.WriteInteger('Optimize','MaxMem',fMaxMemory);
+    LaunchIni.WriteInteger('Optimize','MaxCpu',fNbCpu);
+    LaunchIni.WriteInteger('Optimize','ExThreads',fExThreads);
+    LaunchIni.WriteString('Optimize','Malloc',fModeAlloc);
+    LaunchIni.WriteBool('Optimize','EnableHT',fEnableHT);
+    LaunchIni.WriteBool('Optimize','NoSplash',fNoSplash);
+    LaunchIni.WriteBool('Optimize','WorldEmpty',fWorldEmpty);
+    LaunchIni.WriteBool('Optimize','NoLogs',fNoLogs);
+  FINALLY
+    LaunchIni.Free;
+  END;
+end;
+
+procedure TGameEnv.SetInfosToForm;
+var I : integer;
+begin
+  //
+  if fDefautProfil <> '' then
+  begin
+    DetailForm.CBProfileName.ItemIndex :=  DetailForm.CBProfileName.Items.IndexOf(fDefautProfil);
+  end;
+  DetailForm.EmplArma.Text :=fGameEmpl;
+  DetailForm.EMPLADDONS.Text := fAddonsEmpl;
+  DetailForm.CBERRORS.Checked := fShowErrors;
+  DetailForm.CBNOPAUSE.Checked := fNoPause;
+  DetailForm.CBWINDOWED.Checked := fWindowed;
+  DetailForm.CBFILEPACHING.Checked := fFilePatching;
+  DetailForm.CBCHECKSIGN.Checked := fControleSig;
+  DetailForm.CBENABLEBATTLEYE.Checked := fBEActive;
+  if fMaxMemory <> 0 then
+  begin
+    DetailForm.CBMEMALLOUE.ItemIndex := DetailForm.CBMEMALLOUE.Items.IndexOf(IntToStr(fMaxMemory));
+  end;
+  if fNbCpu <> 0 then
+  begin
+    DetailForm.SELNBCORES.ItemIndex := DetailForm.SELNBCORES.Items.IndexOf(IntToStr(fNbCpu));
+  end;
+  if fExThreads <> 0 then
+  begin
+    DetailForm.CBNbEXthreads.ItemIndex := DetailForm.CBNbEXthreads.Items.IndexOf(IntToStr(fExThreads));
+  end;
+  if fModeAlloc <> '' then
+  begin
+    DetailForm.CBMALLOC.ItemIndex := DetailForm.CBMALLOC.Items.IndexOf(fModeAlloc);
+  end;
+  DetailForm.CBEnabledHT.Checked := fEnableHT;
+  DetailForm.CBNoSplash.Checked := fNoSplash;
+  DetailForm.CBWorldEmpty.Checked := fWorldEmpty;
+  DetailForm.CBNologs.Checked :=fNoLogs;
+end;
+
 procedure TGameEnv.SetTypeOS;
 var si: TSystemInfo;
 begin
@@ -320,11 +466,6 @@ begin
     PROCESSOR_ARCHITECTURE_INTEL:  fTypeOS := tto32; 
     PROCESSOR_ARCHITECTURE_UNKNOWN: fTypeOS := ttoUndef; 
   end;		
-end;
-
-procedure TGameEnv.StoreParams;
-begin
-
 end;
 
 { TaddonsList }
@@ -404,11 +545,13 @@ end;
 constructor TServer.create;
 begin
 	fAddonList := TaddonsList.Create;
+  fAddonServer := TaddonsList.Create;
 end;
 
 destructor TServer.destroy;
 begin
   fAddonList.Free;
+  fAddonServer.Free;
   inherited;
 end;
 

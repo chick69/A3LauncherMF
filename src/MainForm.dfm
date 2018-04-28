@@ -55,7 +55,6 @@ object GridForm: TGridForm
         BorderWidth = 5
         FlowStyle = fsTopBottomLeftRight
         TabOrder = 0
-        ExplicitTop = 78
         object GroupPanel1_1: TPanel
           Left = 5
           Top = 5
