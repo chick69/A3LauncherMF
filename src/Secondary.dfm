@@ -314,7 +314,6 @@ object DetailForm: TDetailForm
     ParentColor = False
     TabOrder = 2
     Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanInertia, igoParentPassthrough]
-    ExplicitTop = 134
     object Label1: TLabel
       Left = 104
       Top = 25
@@ -382,20 +381,19 @@ object DetailForm: TDetailForm
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
-      object CBProfile: TCheckBox
-        Left = 32
-        Top = 32
-        Width = 65
+      object Label2: TLabel
+        Left = 48
+        Top = 36
+        Width = 40
         Height = 17
         Caption = 'Profil'
-        TabOrder = 0
       end
       object CBProfileName: TComboBox
         Left = 116
-        Top = 28
+        Top = 32
         Width = 145
         Height = 25
-        TabOrder = 1
+        TabOrder = 0
       end
       object CBERRORS: TCheckBox
         Left = 32
@@ -403,7 +401,7 @@ object DetailForm: TDetailForm
         Width = 201
         Height = 17
         Caption = 'Show Errors'
-        TabOrder = 2
+        TabOrder = 1
       end
       object CBNOPAUSE: TCheckBox
         Left = 32
@@ -411,7 +409,7 @@ object DetailForm: TDetailForm
         Width = 97
         Height = 17
         Caption = 'No Pause'
-        TabOrder = 3
+        TabOrder = 2
       end
       object CBWINDOWED: TCheckBox
         Left = 32
@@ -419,7 +417,7 @@ object DetailForm: TDetailForm
         Width = 153
         Height = 17
         Caption = 'Windowed Mode'
-        TabOrder = 4
+        TabOrder = 3
       end
       object CBFILEPACHING: TCheckBox
         Left = 32
@@ -427,7 +425,7 @@ object DetailForm: TDetailForm
         Width = 121
         Height = 17
         Caption = 'File Patching'
-        TabOrder = 5
+        TabOrder = 4
       end
       object CBCHECKSIGN: TCheckBox
         Left = 32
@@ -435,7 +433,7 @@ object DetailForm: TDetailForm
         Width = 169
         Height = 17
         Caption = 'Check Signatures'
-        TabOrder = 6
+        TabOrder = 5
       end
       object CBENABLEBATTLEYE: TCheckBox
         Left = 32
@@ -443,7 +441,7 @@ object DetailForm: TDetailForm
         Width = 169
         Height = 17
         Caption = 'Enable Battleye'
-        TabOrder = 7
+        TabOrder = 6
       end
       object CBRESTART: TCheckBox
         Left = 32
@@ -451,7 +449,7 @@ object DetailForm: TDetailForm
         Width = 169
         Height = 17
         Caption = 'Auto restart'
-        TabOrder = 8
+        TabOrder = 7
       end
     end
     object GBOptimisations: TGroupBox
@@ -467,37 +465,33 @@ object DetailForm: TDetailForm
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
-      object CBMem: TCheckBox
-        Left = 32
-        Top = 43
-        Width = 201
-        Height = 17
-        Caption = 'Max Memory'
-        TabOrder = 0
+      object Label3: TLabel
+        Left = 48
+        Top = 36
+        Width = 65
+        Height = 19
+        Caption = 'Memoire'
       end
-      object CBCPU: TCheckBox
-        Left = 32
-        Top = 72
-        Width = 201
-        Height = 17
-        Caption = 'CPU Count'
-        TabOrder = 1
+      object Label4: TLabel
+        Left = 48
+        Top = 68
+        Width = 73
+        Height = 19
+        Caption = 'CpuCount'
       end
-      object CEXthreads: TCheckBox
-        Left = 32
-        Top = 103
-        Width = 201
-        Height = 17
+      object Label5: TLabel
+        Left = 48
+        Top = 100
+        Width = 78
+        Height = 19
         Caption = 'ExThreads'
-        TabOrder = 2
       end
-      object CMALLOC: TCheckBox
-        Left = 32
-        Top = 134
-        Width = 201
-        Height = 17
+      object Label6: TLabel
+        Left = 48
+        Top = 132
+        Width = 50
+        Height = 19
         Caption = 'Malloc'
-        TabOrder = 3
       end
       object CBEnabledHT: TCheckBox
         Left = 32
@@ -505,7 +499,7 @@ object DetailForm: TDetailForm
         Width = 201
         Height = 17
         Caption = 'Enable HT'
-        TabOrder = 4
+        TabOrder = 0
       end
       object CBNoSplash: TCheckBox
         Left = 32
@@ -513,7 +507,7 @@ object DetailForm: TDetailForm
         Width = 201
         Height = 17
         Caption = 'No Splash Screen'
-        TabOrder = 5
+        TabOrder = 1
       end
       object CBWorldEmpty: TCheckBox
         Left = 32
@@ -521,7 +515,7 @@ object DetailForm: TDetailForm
         Width = 201
         Height = 17
         Caption = 'Default World Emlty'
-        TabOrder = 6
+        TabOrder = 2
       end
       object CBNologs: TCheckBox
         Left = 32
@@ -529,35 +523,35 @@ object DetailForm: TDetailForm
         Width = 201
         Height = 17
         Caption = 'No Logs'
-        TabOrder = 7
+        TabOrder = 3
       end
       object CBMEMALLOUE: TComboBox
         Left = 188
-        Top = 37
+        Top = 32
         Width = 145
         Height = 27
-        TabOrder = 8
+        TabOrder = 4
       end
       object SELNBCORES: TComboBox
         Left = 188
-        Top = 67
+        Top = 64
         Width = 145
         Height = 27
-        TabOrder = 9
+        TabOrder = 5
       end
       object CBNbEXthreads: TComboBox
         Left = 188
         Top = 96
         Width = 145
         Height = 27
-        TabOrder = 10
+        TabOrder = 6
       end
       object CBMALLOC: TComboBox
         Left = 188
         Top = 129
         Width = 145
         Height = 27
-        TabOrder = 11
+        TabOrder = 7
       end
     end
     object EmplArma: TEdit
@@ -604,6 +598,14 @@ object DetailForm: TDetailForm
     Left = 160
     Top = 920
     object Action1: TAction
+      Caption = 'Action1'
+      OnExecute = Action1Execute
+    end
+  end
+  object ActionList2: TActionList
+    Left = 168
+    Top = 928
+    object Action2: TAction
       Caption = 'Action1'
       OnExecute = Action1Execute
     end

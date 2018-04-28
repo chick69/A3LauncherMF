@@ -102,7 +102,6 @@ type
     procedure GetStoredParams;
     procedure StockeInfoServeur(NomServeur: string);
     procedure GetInfosFromForm;
-    procedure SetInfosToForm;
     procedure SaveToFile;
     function GetDefaultProfile : string;
     function GetGameRepert : string;
@@ -112,8 +111,10 @@ type
     destructor destroy; override;
     procedure ConnectToServer (TheServer : string) ;
     procedure SaveParams;
+    procedure SetInfosToForm;
   end;
 
+function GetSpecialFolder(folder:string) :string;
 function SelectionneRepert (RepertDepart : string) : string;
 
 implementation
@@ -140,14 +141,10 @@ var Reg : TRegistry;
     res : string;
 begin
   try
-    Reg := TRegistry.Create;
+    Reg := TRegistry.Create(KEY_READ);
     Reg.RootKey := HKEY_LOCAL_MACHINE;
-{$IFDEF WIN32}
-    if Reg.OpenKey('\SOFTWARE\bohemia interactive\arma 3', False)
-{$ELSE}
-    if Reg.OpenKey('\SOFTWARE\bohemia interactive\arma 3', False)
-{$ENDIF}
-    then BEGIN res := Reg.ReadString('main'); MessageBox(application.Handle,Pchar('Trouve'),'',MB_OK); END
+    if Reg.OpenKey('SOFTWARE\Wow6432Node\bohemia interactive\arma 3', False)
+    then res := Reg.ReadString('main')
     else res := '';
   finally
     Reg.CloseKey;
@@ -284,7 +281,8 @@ end;
 
 procedure TGameEnv.GetInfosFromForm;
 begin
-  fDefautProfil := DetailForm.CBProfileName.Text;
+  if (DetailForm.CBProfileName.Text <> '<<Défaut>>') then  fDefautProfil := DetailForm.CBProfileName.Text
+                                                     else  fDefautProfil := '';
   fGameEmpl := DetailForm.EmplArma.Text;
   fAddonsEmpl := DetailForm.EMPLADDONS.Text;
   fShowErrors := detailForm.CBERRORS.Checked;
@@ -312,13 +310,17 @@ end;
 
 procedure TGameEnv.GetStoredParams;
 var LaunchIni : TIniFile;
+    lfGameEmpl,lfDefautProfil : string;
 begin
 	if FileExists( ININame) then
   begin
     LaunchIni := TIniFile.Create(ININame);
     TRY
-      fDefautProfil := LaunchIni.ReadString('Launcher','ProfileName',GetDefaultProfile);
-      fGameEmpl :=  LaunchIni.ReadString('Launcher','GameEmpl',GetGameRepert);
+      lfDefautProfil := LaunchIni.ReadString('Launcher','ProfileName',GetDefaultProfile);
+      if lfDefautProfil <> '' then fDefautProfil := lfDefautProfil else fDefautProfil := GetDefaultProfile;
+      lfGameEmpl :=  LaunchIni.ReadString('Launcher','GameEmpl',GetGameRepert);
+      if lfGameEmpl <> '' then fGameEmpl := lfGameEmpl else fGameEmpl := GetGameRepert;
+      //
       fAddonsEmpl := LaunchIni.ReadString('Launcher','AddonsEmpl','');
       fShowErrors := LaunchIni.ReadBool('Launcher','ShowErrors',false);
       fNoPause :=  LaunchIni.ReadBool('Launcher','NoPause',true);
@@ -426,8 +428,8 @@ begin
   begin
     DetailForm.CBProfileName.ItemIndex :=  DetailForm.CBProfileName.Items.IndexOf(fDefautProfil);
   end;
-  DetailForm.EmplArma.Text :=fGameEmpl;
-  DetailForm.EMPLADDONS.Text := fAddonsEmpl;
+  if fGameEmpl <> '' then DetailForm.EmplArma.Text :=fGameEmpl;
+  if fAddonsEmpl <> '' then DetailForm.EMPLADDONS.Text := fAddonsEmpl;
   DetailForm.CBERRORS.Checked := fShowErrors;
   DetailForm.CBNOPAUSE.Checked := fNoPause;
   DetailForm.CBWINDOWED.Checked := fWindowed;

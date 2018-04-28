@@ -28,7 +28,6 @@ type
     EmplArma: TEdit;
     Label1: TLabel;
     SBSelRepert: TSpeedButton;
-    CBProfile: TCheckBox;
     CBProfileName: TComboBox;
     CBERRORS: TCheckBox;
     CBNOPAUSE: TCheckBox;
@@ -37,10 +36,6 @@ type
     CBCHECKSIGN: TCheckBox;
     CBENABLEBATTLEYE: TCheckBox;
     CBRESTART: TCheckBox;
-    CBMem: TCheckBox;
-    CBCPU: TCheckBox;
-    CEXthreads: TCheckBox;
-    CMALLOC: TCheckBox;
     CBEnabledHT: TCheckBox;
     CBNoSplash: TCheckBox;
     CBWorldEmpty: TCheckBox;
@@ -52,6 +47,13 @@ type
     LEMPLADDONS: TLabel;
     EMPLADDONS: TEdit;
     SelAddons: TSpeedButton;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    ActionList2: TActionList;
+    Action2: TAction;
+    Label6: TLabel;
     procedure BackToMainForm(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -64,13 +66,13 @@ type
     procedure SBSelRepertClick(Sender: TObject);
     procedure  SaveParams;
     procedure SelAddonsClick(Sender: TObject);
-
   private
   	NbCores : integer;
     { Déclarations privées }
     procedure AppBarResize;
     procedure AppBarShow(mode: integer);
     function GetMemDispo : integer;
+    procedure RempliCBProfils;
   public
     { Déclarations publiques }
   end;
@@ -156,9 +158,12 @@ var
   CurMem : integer;
 begin
   AppBarShow(0);
+  RempliCBProfils;
   //
   NbCores := System.CPUCount;
+  SELNBCORES.Items.Clear;
   SELNBCORES.Items.Add('<<Défaut>>') ; SELNBCORES.ItemIndex := 0;
+  CBNbEXthreads.Items.clear;
   CBNbEXthreads.Items.Add('<<Défaut>>') ; CBNbEXthreads.ItemIndex := 0;
   for II := 1 to nbCores do
   begin
@@ -184,6 +189,7 @@ begin
   CBMALLOC.Items.Clear;
   CBMALLOC.AddItem('<<Défaut>>',nil); CBMALLOC.ItemIndex := 0;
   //
+  GameEnv.SetInfosToForm;
 end;
 
 function TDetailForm.GetMemDispo: integer;
@@ -192,6 +198,35 @@ begin
   Memory.dwLength:=SizeOf(Memory);
   GlobalMemoryStatus(Memory);
   result := (Memory.dwAvailPhys div 262144) div 5;
+end;
+
+procedure TDetailForm.RempliCBProfils;
+var Info   : TSearchRec;
+    TheDepart,TheProfile: string;
+begin
+  CBProfileName.Items.Clear;
+  CBProfileName.AddItem('<<Défaut>>',nil); CBProfileName.ItemIndex := 0;
+  //
+  TheDepart := IncludeTrailingBackslash(IncludeTrailingBackslash(GetSpecialFolder ('Personal'))+'Arma 3 - Other Profiles');
+  If FindFirst(TheDepart+'*.*',faAnyFile,Info)=0 Then
+  begin
+    repeat
+      If (info.Name<>'.')And(info.Name<>'..') then
+      begin
+        If Not((Info.Attr And faDirectory)=0) then
+        begin
+          TheProfile := IncludeTrailingBackslash(TheDepart+Info.Name)+Info.name+'.Arma3Profile';
+          if FileExists (TheProfile) then
+          begin
+            CBProfileName.AddItem(StringReplace (Info.name,'%20',' ',[rfReplaceAll]),nil);
+          end;
+
+        end;
+
+      end;
+    until FindNext (Info)<>0;
+  end;
+  FindClose(Info);
 end;
 
 procedure TDetailForm.SaveParams;
