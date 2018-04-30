@@ -73,6 +73,7 @@ type
     procedure AppBarShow(mode: integer);
     function GetMemDispo : integer;
     procedure RempliCBProfils;
+    procedure RemplitMalloc;
   public
     { Déclarations publiques }
   end;
@@ -186,8 +187,7 @@ begin
     if MaxDispo > CurMem then CBMEMALLOUE.AddItem(InttoStr(Curmem),nil) else break;
   end;
 {$ENDIF}
-  CBMALLOC.Items.Clear;
-  CBMALLOC.AddItem('<<Défaut>>',nil); CBMALLOC.ItemIndex := 0;
+  RemplitMalloc;
   //
   GameEnv.SetInfosToForm;
 end;
@@ -198,6 +198,29 @@ begin
   Memory.dwLength:=SizeOf(Memory);
   GlobalMemoryStatus(Memory);
   result := (Memory.dwAvailPhys div 262144) div 5;
+end;
+
+procedure TDetailForm.RemplitMalloc;
+var Info   : TSearchRec;
+    TheDepart,TheProfile: string;
+begin
+  CBMALLOC.Items.Clear;
+  CBMALLOC.AddItem('<<Défaut>>',nil); CBMALLOC.ItemIndex := 0;
+  //
+  TheDepart := IncludeTrailingBackslash(IncludeTrailingBackslash(EmplArma.text)+'dll');
+  If FindFirst(TheDepart+'*malloc_bi*.dll',faAnyFile,Info)=0 Then
+  begin
+    repeat
+      If (info.Name<>'.')And(info.Name<>'..') then
+      begin
+        If ((Info.Attr And faDirectory)=0) then
+        begin
+            CBMALLOC.AddItem(ExtractFileName (copy(Info.name,1,pos('.',Info.Name)-1)),nil);
+        end;
+      end;
+    until FindNext (Info)<>0;
+  end;
+  FindClose(Info);
 end;
 
 procedure TDetailForm.RempliCBProfils;
