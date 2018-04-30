@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Actions, Vcl.ActnList,
   Vcl.Styles, Vcl.Themes, Vcl.Touch.GestureMgr, Vcl.Buttons
-  ,Vcl.FileCtrl
+  ,Vcl.FileCtrl, Vcl.CheckLst
   ;
 
 type
@@ -21,6 +21,16 @@ type
     Action1: TAction;
     CloseButton: TImage;
     ScrollBox1: TScrollBox;
+    Panel2: TPanel;
+    Panel4: TPanel;
+    CheckListBox1: TCheckListBox;
+    Panel5: TPanel;
+    SERVALUPDATE: TSpeedButton;
+    Panel3: TPanel;
+    Panel6: TPanel;
+    SpeedButton1: TSpeedButton;
+    CheckListBox2: TCheckListBox;
+    Panel7: TPanel;
     procedure BackToMainForm(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);

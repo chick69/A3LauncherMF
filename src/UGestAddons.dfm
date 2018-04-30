@@ -314,6 +314,128 @@ object DetailAddons: TDetailAddons
     ParentColor = False
     TabOrder = 2
     Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanInertia, igoParentPassthrough]
+    object Panel2: TPanel
+      Left = 48
+      Top = 22
+      Width = 1057
+      Height = 394
+      BevelOuter = bvNone
+      Caption = 'Panel2'
+      TabOrder = 0
+      object Panel4: TPanel
+        Left = 0
+        Top = 346
+        Width = 1057
+        Height = 48
+        Align = alBottom
+        BevelOuter = bvNone
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Calibri'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        ExplicitTop = 415
+        object SERVALUPDATE: TSpeedButton
+          Left = 904
+          Top = 0
+          Width = 144
+          Height = 48
+          Caption = 'Mise '#224' jour'
+          Flat = True
+        end
+      end
+      object CheckListBox1: TCheckListBox
+        Left = 0
+        Top = 41
+        Width = 1057
+        Height = 305
+        Align = alClient
+        ItemHeight = 13
+        TabOrder = 1
+        ExplicitTop = 35
+      end
+      object Panel5: TPanel
+        Left = 0
+        Top = 0
+        Width = 1057
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        Caption = 'SERVAL'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Calibri'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        ExplicitLeft = 528
+        ExplicitTop = 48
+        ExplicitWidth = 185
+      end
+    end
+    object Panel3: TPanel
+      Left = 48
+      Top = 430
+      Width = 1057
+      Height = 372
+      BevelOuter = bvNone
+      Caption = 'Panel2'
+      TabOrder = 1
+      object Panel6: TPanel
+        Left = 0
+        Top = 324
+        Width = 1057
+        Height = 48
+        Align = alBottom
+        BevelOuter = bvNone
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Calibri'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        ExplicitTop = 409
+        object SpeedButton1: TSpeedButton
+          Left = 904
+          Top = 0
+          Width = 144
+          Height = 48
+          Caption = 'Mise '#224' jour'
+          Flat = True
+        end
+      end
+      object CheckListBox2: TCheckListBox
+        Left = 0
+        Top = 41
+        Width = 1057
+        Height = 283
+        Align = alClient
+        ItemHeight = 13
+        TabOrder = 1
+        ExplicitTop = 35
+      end
+      object Panel7: TPanel
+        Left = 0
+        Top = 0
+        Width = 1057
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        Caption = 'ARES'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Calibri'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        ExplicitTop = -6
+      end
+    end
   end
   object GestureManager1: TGestureManager
     Left = 48
