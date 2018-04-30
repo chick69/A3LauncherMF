@@ -6,7 +6,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Actions, Vcl.ActnList,
   Vcl.Styles, Vcl.Themes, Vcl.Touch.GestureMgr, Vcl.Buttons, Registry
-  ,Vcl.FileCtrl,System.IniFiles,XMLDOC, XMLIntf,Secondary
+  ,Vcl.FileCtrl,System.IniFiles,XMLDOC, XMLIntf,Secondary,WinHttp_tlb,IdHttp
   ;
 
 const
@@ -100,12 +100,12 @@ type
     procedure DefiniEnv;
     procedure SetTypeOS;
     procedure GetStoredParams;
-    procedure StockeInfoServeur(NomServeur: string);
+    procedure GetInfosLocales(NomServeur: string);
     procedure GetInfosFromForm;
     procedure SaveToFile;
     function GetDefaultProfile : string;
     function GetGameRepert : string;
-
+    procedure RecupInfosServeurs;
   public
   	constructor create;
     destructor destroy; override;
@@ -224,7 +224,7 @@ begin
   inherited;
 end;
 
-procedure TGameEnv.StockeInfoServeur (NomServeur : string);
+procedure TGameEnv.GetInfosLocales (NomServeur : string);
 var XMlDOC : IXMlDocument;
 		II,JJ,KK : integer;
     SV,N1,N2,N3 : IXMLNode;
@@ -366,18 +366,78 @@ begin
   // chargement de la configuration courante
   if FileExists (IncludeTrailingBackslash (fLocalAppData)+'MFSERVAL.xml') then
   begin
-  	StockeInfoServeur ('MFSERVAL'); // sans Addons
+  	GetInfosLocales ('MFSERVAL'); // sans Addons
   end;
   if FileExists (IncludeTrailingBackslash (fLocalAppData)+'MFSERVALA.xml') then
   begin
-  	StockeInfoServeur ('MFSERVALA');  // Serval avec Addons
+  	GetInfosLocales ('MFSERVALA');  // Serval avec Addons
   end;
   if FileExists (IncludeTrailingBackslash (fLocalAppData)+'MFARES.xml') then
   begin
-  	StockeInfoServeur ('MFARES'); // ARES
+  	GetInfosLocales ('MFARES'); // ARES
   end;
-  
+  RecupInfosServeurs;
 end;
+
+(*
+procedure TGameEnv.RecupInfosServeurs;
+var http : IWinHttpRequest;
+		url : string;
+    Stream: TMemoryStream;
+begin
+  url := 'http://mercenaires-francais.fr/Addons/.env/SERVAL.xml';
+	http := CoWinHttpRequest.Create;
+  try
+    http.SetAutoLogonPolicy(1); // Enable SSO fale
+    http.Open('GET', url, False);
+    http.SetRequestHeader('Content-Type', 'text/xml');
+    http.SetRequestHeader('Accept', 'application/xml');
+    TRY
+      http.Send(nil);
+      Stream.SaveToFile(FileName);
+    EXCEPT
+      on E: Exception do
+      begin
+        ShowMessage(E.Message);
+        exit;
+      end;
+    end;
+  finally
+    http := nil;
+  end;
+end;
+*)
+
+function LocalGetTempPath: string; 
+var 
+  TmpDir: PChar; 
+begin 
+  TmpDir := StrAlloc(MAX_PATH); 
+  GetTempPath(TmpDir, MAX_PATH); 
+  Result := string(TmpDir); 
+  if Result[Length(Result)] <> '\' then 
+    Result := Result + '\'; 
+  StrDispose(TmpDir); 
+end; 
+
+procedure TGameEnv.RecupInfosServeurs;
+var
+  IdHTTP1: TIdHTTP;
+  Stream: TMemoryStream;
+  Url, FileName: String;
+begin    
+  Url := 'http://mercenaires-francais.fr/Addons/.env/SERVAL.xml';
+  Filename :=  IncludeTrailingBackslash(LocalGetTempPath)+'SERVAL.xml';
+
+  IdHTTP1 := TIdHTTP.Create(Self);
+  Stream := TMemoryStream.Create;
+  try
+    IdHTTP1.Get(Url, Stream);
+    Stream.SaveToFile(FileName);
+  finally
+    Stream.Free;
+    IdHTTP1.Free;
+  end;
 
 procedure TGameEnv.SaveParams;
 begin

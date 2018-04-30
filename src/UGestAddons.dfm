@@ -336,7 +336,6 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
-        ExplicitTop = 415
         object SERVALUPDATE: TSpeedButton
           Left = 904
           Top = 0
@@ -345,16 +344,6 @@ object DetailAddons: TDetailAddons
           Caption = 'Mise '#224' jour'
           Flat = True
         end
-      end
-      object CheckListBox1: TCheckListBox
-        Left = 0
-        Top = 41
-        Width = 1057
-        Height = 305
-        Align = alClient
-        ItemHeight = 13
-        TabOrder = 1
-        ExplicitTop = 35
       end
       object Panel5: TPanel
         Left = 0
@@ -370,10 +359,25 @@ object DetailAddons: TDetailAddons
         Font.Name = 'Calibri'
         Font.Style = [fsBold]
         ParentFont = False
+        TabOrder = 1
+      end
+      object DrawGrid1: TDrawGrid
+        Left = 0
+        Top = 41
+        Width = 1057
+        Height = 305
+        Align = alClient
+        BevelOuter = bvNone
+        ColCount = 2
+        DefaultRowHeight = 18
+        FixedCols = 0
+        FixedRows = 0
+        Options = []
         TabOrder = 2
-        ExplicitLeft = 528
-        ExplicitTop = 48
-        ExplicitWidth = 185
+        ExplicitLeft = 544
+        ExplicitTop = 64
+        ExplicitWidth = 320
+        ExplicitHeight = 120
       end
     end
     object Panel3: TPanel
@@ -398,7 +402,6 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
-        ExplicitTop = 409
         object SpeedButton1: TSpeedButton
           Left = 904
           Top = 0
@@ -407,16 +410,6 @@ object DetailAddons: TDetailAddons
           Caption = 'Mise '#224' jour'
           Flat = True
         end
-      end
-      object CheckListBox2: TCheckListBox
-        Left = 0
-        Top = 41
-        Width = 1057
-        Height = 283
-        Align = alClient
-        ItemHeight = 13
-        TabOrder = 1
-        ExplicitTop = 35
       end
       object Panel7: TPanel
         Left = 0
@@ -432,8 +425,22 @@ object DetailAddons: TDetailAddons
         Font.Name = 'Calibri'
         Font.Style = [fsBold]
         ParentFont = False
+        TabOrder = 1
+      end
+      object DrawGrid2: TDrawGrid
+        Left = 0
+        Top = 41
+        Width = 1057
+        Height = 283
+        Align = alClient
+        BevelOuter = bvNone
+        ColCount = 2
+        DefaultRowHeight = 18
+        FixedCols = 0
+        FixedRows = 0
+        Options = []
         TabOrder = 2
-        ExplicitTop = -6
+        ExplicitTop = 49
       end
     end
   end

@@ -7,7 +7,8 @@ uses
   MainForm in '..\src\MainForm.pas' {GridForm},
   Secondary in '..\src\Secondary.pas' {DetailForm},
   UGestAddons in '..\src\UGestAddons.pas' {DetailAddons},
-  UUtils in '..\src\UUtils.pas';
+  UUtils in '..\src\UUtils.pas',
+  WinHttp_TLB in '..\src\WinHttp_TLB.pas';
 
 {$R *.res}
 
