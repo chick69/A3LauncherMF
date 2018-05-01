@@ -6,14 +6,14 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Actions, Vcl.ActnList,
   Vcl.Styles, Vcl.Themes, Vcl.Touch.GestureMgr, Vcl.Buttons, Registry
-  ,Vcl.FileCtrl,System.IniFiles,XMLDOC, XMLIntf,Secondary,WinHttp_tlb,IdHttp
+  ,Vcl.FileCtrl,System.IniFiles,XMLDOC, XMLIntf,Secondary,WinHttp_tlb,IdHttp,UaddonUtils,VCL.grids
   ;
 
 const
   PROCESSOR_ARCHITECTURE_AMD64 = 9;
   PROCESSOR_ARCHITECTURE_IA64 = 6;
   PROCESSOR_ARCHITECTURE_INTEL = 0;
-  PROCESSOR_ARCHITECTURE_UNKNOWN = $FFFF;  
+  PROCESSOR_ARCHITECTURE_UNKNOWN = $FFFF;
 type
 
 	TTypeOs = (ttoUndef,tto32,tto64);
@@ -22,18 +22,25 @@ type
   TAddons = class (Tobject)
     ffile : string;
     fname : string;
+    fDesc : string;
     fversion : string;
+    fOK : boolean;
+  private
+    property XFile : string read ffile;
+    property XName : string read fName;
+    property XDesc : string read fDesc;
+    property XOk : boolean read fOk;
+    constructor create;
   end;
 
   TaddonsList = class(TList)
   private
-  	fUid : string;
     function Add(AObject: TAddons): Integer;
     function GetItems(Indice: integer): TAddons;
     procedure SetItems(Indice: integer; const Value: TAddons);
   public
-  	property Version : string read fUID write fUID;
     property Items [Indice : integer] : TAddons read GetItems write SetItems;
+    function find (Name : string) : TAddons;
     procedure clear; override;
     destructor destroy; override;
   end;
@@ -44,16 +51,16 @@ type
     fAdress : string;
     fPort : string;
     fStatus : boolean;
+    fAddonStatus : boolean;
     fWithAddons : boolean;
     fAddonList : TaddonsList;
-    fAddonServer : TaddonsList;
     fGameServer : TGameServer;
   public
 		property Name : string read fName write fName;
     property Status : boolean read fStatus write fStatus;
     property WithAddons : boolean read fWithAddons write fWithAddons;
-    property ServerAddons : TaddonsList read fAddonServer;
     property LocalAddons : TaddonsList read fAddonList;
+    property AddonsStatus : boolean read fAddonStatus;
     constructor create;
     destructor destroy; override;
   end;
@@ -95,29 +102,49 @@ type
     //
     fLocalAppData : string;
     ININame : string;
-
     //
     procedure DefiniEnv;
     procedure SetTypeOS;
     procedure GetStoredParams;
-    procedure GetInfosLocales(NomServeur: string);
+    procedure SetInfoServers;
     procedure GetInfosFromForm;
     procedure SaveToFile;
     function GetDefaultProfile : string;
     function GetGameRepert : string;
     procedure RecupInfosServeurs;
+
   public
+    property Servers : TserverList read fServers;
+    property AddonsEmpl : string read fAddonsEmpl;
+    property GameEmpl : string read fGameEmpl;
   	constructor create;
     destructor destroy; override;
-    procedure ConnectToServer (TheServer : string) ;
     procedure SaveParams;
     procedure SetInfosToForm;
+    procedure InitAddonState;
+    procedure SetAddonsState;
+    procedure SetAddonsServerStatus;
+    function GetArma3Exe : string;
+    function SetParams (Server : Tserver) : string;
+    function SetAddons (Server : Tserver) : string;
   end;
 
 function GetSpecialFolder(folder:string) :string;
 function SelectionneRepert (RepertDepart : string) : string;
+function LocalGetTempPath: string;
+
+var GameEnv : TGameEnv;
 
 implementation
+uses MainForm,UGestAddons;
+
+function LocalGetTempPath: string;
+var
+  tempFolder: array[0..MAX_PATH] of Char;
+begin
+  GetTempPath(MAX_PATH, @tempFolder);
+  result := StrPas(tempFolder);
+end;
 
 function GetSpecialFolder(folder:string) :string;
 var Reg : TRegistry;
@@ -151,6 +178,25 @@ begin
     Reg.Free;
   end;
   result := res;
+end;
+
+function TGameEnv.GetArma3Exe: string;
+begin
+  result := '';
+  if fGameEmpl = ''  then exit;
+  if fBEActive  then
+  begin
+    result := IncludeTrailingBackslash(fGameEmpl)+'arma3battleye.exe'
+  end else
+  begin
+    if fTypeOS = tto64 then
+    begin
+      result := IncludeTrailingBackslash(fGameEmpl)+'Arma3_X64.exe'
+    end else
+    begin
+      result := IncludeTrailingBackslash(fGameEmpl)+'Arma3.exe'
+    end;
+  end;
 end;
 
 function TGameEnv.GetDefaultProfile : string;
@@ -187,17 +233,11 @@ begin
       if Execute then result := FileName;
     finally
       Free;
-    end  
+    end
   end;
 end;
 
 { TGameEnv }
-
-
-procedure TGameEnv.ConnectToServer(TheServer: string);
-begin
-
-end;
 
 constructor TGameEnv.create;
 begin
@@ -205,7 +245,6 @@ begin
 	SetTypeOS;
   DefiniEnv;
 	GetStoredParams;
-  SetInfosToForm;
 end;
 
 procedure TGameEnv.DefiniEnv;
@@ -224,53 +263,138 @@ begin
   inherited;
 end;
 
-procedure TGameEnv.GetInfosLocales (NomServeur : string);
+function TGameEnv.SetAddons(Server: Tserver): string;
+var II : integer;
+begin
+  result := '';
+  for II := 0 to Server.fAddonList.Count -1 do
+  begin
+    if result <> '' then result := result + '';
+    result := result + IncludeTrailingBackslash (GameEnv.fAddonsEmpl)+Server.fAddonList.Items[II].fname;
+  end;
+end;
+
+procedure TGameEnv.SetAddonsServerStatus;
+
+  procedure PositionneAddonsStatus (TheServer : TServer);
+  var II : integer;
+  begin
+    TheServer.fAddonStatus := true;
+    for II := 0 to TheServer.fAddonList.Count -1 do
+    begin
+      if TheServer.fAddonList.Items[II].fOK = false then
+      begin
+        TheServer.fAddonStatus := false;
+        exit;
+      end;
+    end;
+  end;
+
+var II : integer;
+begin
+  for II := 0  to fServers.Count -1 do
+  begin
+    PositionneAddonsStatus (fServers.Items [II]);
+  end;
+end;
+
+procedure TGameEnv.SetAddonsState;
+
+  procedure UpdateAddonState (AddonName : string);
+  var fLocalName : string;
+      LocalVersion : string;
+      II : integer;
+      TheAddon : Taddons;
+  begin
+     LocalVersion :=GetAddonVersion (IncludeTrailingBackslash (fAddonsEmpl),AddOnName);
+     for II := 0  to fServers.Count -1 do
+     begin
+        if fServers.Items[II].fWithAddons  then
+        begin
+          TheAddon := fServers.items[II].fAddonList.find(Addonname);
+          if TheAddon= nil then Continue;
+          if TheAddon.fversion = LocalVersion  then TheAddon.fOK := true;
+        end;
+     end;
+  end;
+
+var Info : TSearchRec;
+begin
+  if fAddonsEmpl='' then exit;
+  If FindFirst(IncludeTrailingBackslash (fAddonsEmpl)+'*.*',faAnyFile,Info)=0 Then
+  begin
+    repeat
+      If (info.Name<>'.')And(info.Name<>'..') then
+      begin
+        If not ((Info.Attr And faDirectory)=0) then
+        begin
+          UpdateAddonState (Info.Name);
+        end;
+      end;
+    until FindNext (Info)<>0;
+  end;
+  FindClose(Info);
+end;
+
+procedure TGameEnv.SetInfoServers;
 var XMlDOC : IXMlDocument;
-		II,JJ,KK : integer;
+		II,JJ,KK,SS : integer;
     SV,N1,N2,N3 : IXMLNode;
     OServer : TServer;
     UnAddon : TAddons;
 begin
 	XMlDOC := TXMLDocument.Create(nil);
-  XMlDOC.LoadFromFile(IncludeTrailingBackslash (fLocalAppData)+NomServeur+'.xml');
+  XMlDOC.LoadFromFile(IncludeTrailingBackslash (LocalGetTempPath)+'SERVEURS.xml');
   if not XMlDOC.IsEmptyDoc  then
   begin
-  	SV := XMlDOC.documentElement.ChildNodes.Get(0);   // un serveur
-    for II := 0 to SV.ChildNodes.Count -1 do
-    begin  
-    	if II = 0  then
+    for SS := 0 to XMlDOC.documentElement.ChildNodes.Count -1 do
+    begin
+      SV := XMlDOC.documentElement.ChildNodes.Get(SS);   // un serveur
+      for II := 0 to SV.ChildNodes.Count -1 do
       begin
-      	OSerVer := TServer.Create;
-        Oserver.fWithAddons := false;
-        fServers.Add(Oserver);
-      end;
-    	N1 := SV.ChildNodes.Get(II);
-      if N1.NodeName = 'Name' then
-      begin
-				OSerVer.fName := N1.NodeValue;
-      end else if N1.NodeName = 'State' then
-      begin
-				if N1.NodeValue = '1' then OServer.fStatus := true else OServer.fStatus := false;
-      end else if N1.NodeName = 'Addons' then
-      begin
-      	Oserver.WithAddons := true;
-        for JJ := 0 to N1.ChildNodes.Count -1 do
-        begin  
-          UnAddon := TAddons.Create;
-          Oserver.fAddonList.Add(UnAddon);          
-        	N2 := N1.ChildNodes.Get(JJ);
-          for KK  := 0 to N2.ChildNodes.Count -1 do
+        if II = 0  then
+        begin
+          OSerVer := TServer.Create;
+          Oserver.fWithAddons := false;
+          fServers.Add(Oserver);
+        end;
+        N1 := SV.ChildNodes.Get(II);
+        if N1.NodeName = 'Name' then
+        begin
+          OSerVer.fName := N1.NodeValue;
+        end else if N1.NodeName = 'Adress' then
+        begin
+          OSerVer.fAdress := N1.NodeValue;
+        end else if N1.NodeName = 'Port' then
+        begin
+          OSerVer.fPort := N1.NodeValue;
+        end else if N1.NodeName = 'State' then
+        begin
+          if N1.NodeValue = '1' then OServer.fStatus := true else OServer.fStatus := false;
+        end else if N1.NodeName = 'Addons' then
+        begin
+          Oserver.WithAddons := true;
+          for JJ := 0 to N1.ChildNodes.Count -1 do
           begin
-            N3 := N2.ChildNodes.Get(KK) ;
-            if N3.NodeName ='AddonName' then
+            UnAddon := TAddons.Create;
+            Oserver.fAddonList.Add(UnAddon);
+            N2 := N1.ChildNodes.Get(JJ);
+            for KK  := 0 to N2.ChildNodes.Count -1 do
             begin
-              UnAddon.fname := N3.NodeValue;
-            end else if N3.NodeName ='AddonFile' then
-            begin
-              UnAddon.ffile := N3.NodeValue;
-            end else if N3.NodeName ='AddonVersion' then
-            begin
-              UnAddon.fversion := N3.NodeValue;
+              N3 := N2.ChildNodes.Get(KK) ;
+              if N3.NodeName ='AddonName' then
+              begin
+                UnAddon.fname := N3.NodeValue;
+              end else if N3.NodeName ='AddonFile' then
+              begin
+                UnAddon.ffile := N3.NodeValue;
+              end else if N3.NodeName ='AddonVersion' then
+              begin
+                UnAddon.fversion := N3.NodeValue;
+              end else if N3.NodeName ='AddonDesc' then
+              begin
+                UnAddon.fDesc := N3.NodeValue;
+              end;
             end;
           end;
         end;
@@ -363,81 +487,52 @@ begin
     fWorldEmpty := true;
     fNoLogs := true;
   end;
-  // chargement de la configuration courante
-  if FileExists (IncludeTrailingBackslash (fLocalAppData)+'MFSERVAL.xml') then
-  begin
-  	GetInfosLocales ('MFSERVAL'); // sans Addons
-  end;
-  if FileExists (IncludeTrailingBackslash (fLocalAppData)+'MFSERVALA.xml') then
-  begin
-  	GetInfosLocales ('MFSERVALA');  // Serval avec Addons
-  end;
-  if FileExists (IncludeTrailingBackslash (fLocalAppData)+'MFARES.xml') then
-  begin
-  	GetInfosLocales ('MFARES'); // ARES
-  end;
   RecupInfosServeurs;
+  // chargement de la configuration courante
+  if FileExists (IncludeTrailingBackslash (LocalGetTempPath)+'SERVEURS.xml') then
+  begin
+  	SetInfoServers; // sans Addons
+  end;
+  SetAddonsState;
+  SetAddonsServerStatus;
 end;
 
-(*
-procedure TGameEnv.RecupInfosServeurs;
-var http : IWinHttpRequest;
-		url : string;
-    Stream: TMemoryStream;
+procedure TGameEnv.InitAddonState;
+var II,JJ : integer;
 begin
-  url := 'http://mercenaires-francais.fr/Addons/.env/SERVAL.xml';
-	http := CoWinHttpRequest.Create;
-  try
-    http.SetAutoLogonPolicy(1); // Enable SSO fale
-    http.Open('GET', url, False);
-    http.SetRequestHeader('Content-Type', 'text/xml');
-    http.SetRequestHeader('Accept', 'application/xml');
-    TRY
-      http.Send(nil);
-      Stream.SaveToFile(FileName);
-    EXCEPT
-      on E: Exception do
-      begin
-        ShowMessage(E.Message);
-        exit;
-      end;
+  for II  := 0 to fServers.Count -1 do
+  begin
+    fservers.Items[II].fAddonStatus := false;
+    for JJ := 0 to fServers.Items[II].fAddonList.Count -1 do
+    begin
+      fservers.Items[II].fAddonList.Items[JJ].fOK := false;
     end;
-  finally
-    http := nil;
   end;
 end;
-*)
-
-function LocalGetTempPath: string; 
-var 
-  TmpDir: PChar; 
-begin 
-  TmpDir := StrAlloc(MAX_PATH); 
-  GetTempPath(TmpDir, MAX_PATH); 
-  Result := string(TmpDir); 
-  if Result[Length(Result)] <> '\' then 
-    Result := Result + '\'; 
-  StrDispose(TmpDir); 
-end; 
 
 procedure TGameEnv.RecupInfosServeurs;
 var
   IdHTTP1: TIdHTTP;
   Stream: TMemoryStream;
   Url, FileName: String;
-begin    
-  Url := 'http://mercenaires-francais.fr/Addons/.env/SERVAL.xml';
-  Filename :=  IncludeTrailingBackslash(LocalGetTempPath)+'SERVAL.xml';
+begin
+  Url := 'http://mercenaires-francais.fr/Addons/env/SERVEURS.xml';
+  Filename :=  IncludeTrailingBackslash(LocalGetTempPath)+'SERVEURS.xml';
 
-  IdHTTP1 := TIdHTTP.Create(Self);
+  IdHTTP1 := TIdHTTP.Create(Application);
   Stream := TMemoryStream.Create;
   try
-    IdHTTP1.Get(Url, Stream);
-    Stream.SaveToFile(FileName);
+    TRY
+      IdHTTP1.Get(Url, Stream);
+      Stream.SaveToFile(FileName);
+    EXCEPT
+      MessageBox (Application.Handle,'Récupération des configurations impossible','Connection Serveur MF',MB_ICONEXCLAMATION or MB_OK);
+    END;
   finally
     Stream.Free;
     IdHTTP1.Free;
   end;
+end;
 
 procedure TGameEnv.SaveParams;
 begin
@@ -481,7 +576,7 @@ begin
 end;
 
 procedure TGameEnv.SetInfosToForm;
-var I : integer;
+var II : integer;
 begin
   //
   if fDefautProfil <> '' then
@@ -516,6 +611,112 @@ begin
   DetailForm.CBNoSplash.Checked := fNoSplash;
   DetailForm.CBWorldEmpty.Checked := fWorldEmpty;
   DetailForm.CBNologs.Checked :=fNoLogs;
+  // -- Form principale
+  for II := 0 to fservers.Count -1 do
+  begin
+    if fservers.Items[II].fName = 'SERVALA' then
+    begin
+      GridForm.ServalStateRed.Visible := not fservers.Items[II].fAddonStatus;
+      GridForm.ServalStateGreen.Visible := fservers.Items[II].fAddonStatus;
+    end;
+    if fservers.Items[II].fName = 'ARES' then
+    begin
+      GridForm.AresStateRed.Visible := not fservers.Items[II].fAddonStatus;
+      GridForm.AresStateGreen.Visible := fservers.Items[II].fAddonStatus;
+    end;
+  end;
+  DetailAddons.SetForm;
+  // -- Addons form
+end;
+
+function TGameEnv.SetParams(Server: Tserver): string;
+begin
+  result := '';
+  if server.fAdress <> '' then
+  begin
+    result := '-connect='+Server.fAdress;
+  end;
+  if server.fPort <> '' then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-port='+Server.fport;
+  end;
+  if GameEnv.fDefautProfil  <> '' then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '"-name='+GameEnv.fDefautProfil+'"';
+  end;
+  if GameEnv.fShowErrors  then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-showScriptErrors';
+  end;
+  if GameEnv.fNoPause  then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-noPause';
+  end;
+  if GameEnv.fWindowed  then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-window';
+  end;
+  if GameEnv.fFilePatching then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-filePatching';
+  end;
+  if GameEnv.fControleSig then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-checkSignatures';
+  end;
+  if GameEnv.fRSAuto then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-checkSignatures';
+  end;
+  if GameEnv.fMaxMemory <> 0 then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-maxMem='+InttOStr(GameEnv.fMaxMemory);
+  end;
+  if GameEnv.fNbCpu <> 0 then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-cpuCount='+InttOStr(GameEnv.fNbCpu);
+  end;
+  if GameEnv.fExThreads <> 0 then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-exThreads='+InttOStr(GameEnv.fExThreads);
+  end;
+  if GameEnv.fModeAlloc <> '' then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-malloc='+GameEnv.fModeAlloc;
+  end;
+  if GameEnv.fEnableHT  then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-enableHT';
+  end;
+  if GameEnv.fNoSplash  then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-nosplash';
+  end;
+  if GameEnv.fWorldEmpty then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-world=empty';
+  end;
+  if GameEnv.fNoLogs  then
+  begin
+    if result <> '' then result := result + ' ';
+    result := result + '-nologs';
+  end;
+
 end;
 
 procedure TGameEnv.SetTypeOS;
@@ -523,11 +724,11 @@ var si: TSystemInfo;
 begin
 	GetSystemInfo(si);
   case si.wProcessorArchitecture of
-    PROCESSOR_ARCHITECTURE_AMD64: fTypeOS := tto64; 
-    PROCESSOR_ARCHITECTURE_IA64:  fTypeOS := tto64; 
-    PROCESSOR_ARCHITECTURE_INTEL:  fTypeOS := tto32; 
-    PROCESSOR_ARCHITECTURE_UNKNOWN: fTypeOS := ttoUndef; 
-  end;		
+    PROCESSOR_ARCHITECTURE_AMD64: fTypeOS := tto64;
+    PROCESSOR_ARCHITECTURE_IA64:  fTypeOS := tto64;
+    PROCESSOR_ARCHITECTURE_INTEL:  fTypeOS := tto32;
+    PROCESSOR_ARCHITECTURE_UNKNOWN: fTypeOS := ttoUndef;
+  end;
 end;
 
 { TaddonsList }
@@ -554,6 +755,20 @@ destructor TaddonsList.destroy;
 begin
   Clear;
   inherited;
+end;
+
+function TaddonsList.find(Name: string): TAddons;
+var II : integer;
+begin
+  result := nil;
+  for II := 0 to Count -1 do
+  begin
+    if Items[II].fname = Name then
+    begin
+      result := Items[II];
+      break;
+    end;
+  end;
 end;
 
 function TaddonsList.GetItems(Indice: integer): TAddons;
@@ -607,14 +822,26 @@ end;
 constructor TServer.create;
 begin
 	fAddonList := TaddonsList.Create;
-  fAddonServer := TaddonsList.Create;
 end;
 
 destructor TServer.destroy;
 begin
   fAddonList.Free;
-  fAddonServer.Free;
   inherited;
 end;
+
+{ TAddons }
+
+constructor TAddons.create;
+begin
+  fOk := false;
+end;
+
+initialization
+	GameEnv := TGameEnv.create;
+
+FINALIZATION
+ 	GameEnv.Free;
+
 
 end.

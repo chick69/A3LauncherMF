@@ -2,7 +2,7 @@ object GridForm: TGridForm
   Left = -183
   Top = 480
   BorderStyle = bsNone
-  Caption = 'GridForm'
+  Caption = 'Arma 3 Launcher MF'
   ClientHeight = 1000
   ClientWidth = 2000
   Color = clBtnFace
@@ -16,7 +16,6 @@ object GridForm: TGridForm
   Position = poDesigned
   Touch.GestureManager = GestureManager1
   WindowState = wsMaximized
-  OnClose = FormClose
   OnGesture = FormGesture
   OnKeyDown = FormKeyDown
   OnResize = FormResize
@@ -55,7 +54,7 @@ object GridForm: TGridForm
         BorderWidth = 5
         FlowStyle = fsTopBottomLeftRight
         TabOrder = 0
-        object GroupPanel1_1: TPanel
+        object GPSERVALADDONS: TPanel
           Left = 5
           Top = 5
           Width = 442
@@ -63,7 +62,7 @@ object GridForm: TGridForm
           BevelOuter = bvNone
           BorderWidth = 5
           TabOrder = 0
-          object Image1: TImage
+          object ImgServal: TImage
             Left = 5
             Top = 5
             Width = 432
@@ -4812,6 +4811,7 @@ object GridForm: TGridForm
               075DD7D8FDFB2207062FADF0248C22BCCB8D9D9ABD5BB7327AECB6AB0FD2FF07
               D95D102C0344AB940000000049454E44AE426082}
             Proportional = True
+            OnClick = ImgServalClick
             ExplicitLeft = 2
           end
           object Panel5: TPanel
@@ -16905,7 +16905,7 @@ object GridForm: TGridForm
             end
           end
         end
-        object GroupPanel1_2: TPanel
+        object GPARES: TPanel
           Left = 5
           Top = 251
           Width = 443
@@ -16913,7 +16913,7 @@ object GridForm: TGridForm
           BevelOuter = bvNone
           BorderWidth = 5
           TabOrder = 1
-          object Image2: TImage
+          object ImgAres: TImage
             Left = 5
             Top = 5
             Width = 433
@@ -22237,6 +22237,7 @@ object GridForm: TGridForm
               15CBE3980B56CBDC1BC45A0103A8FACC5034A3C9CB38FD0C9F23C04C7A5EDA58
               4308C468038EFAA6C2CA82F45B2539F8B6DBB56AD3A4BF9A67E2FFFF01128E0D
               7F45A187EE0000000049454E44AE426082}
+            OnClick = ImgAresClick
             ExplicitLeft = 2
           end
           object Panel6: TPanel
@@ -34330,7 +34331,7 @@ object GridForm: TGridForm
             end
           end
         end
-        object GroupPanel1_3: TPanel
+        object GPSERVALNOADDONS: TPanel
           Left = 448
           Top = 5
           Width = 434
@@ -34338,7 +34339,7 @@ object GridForm: TGridForm
           BevelOuter = bvNone
           BorderWidth = 5
           TabOrder = 2
-          object Image3: TImage
+          object ImgServalNoAdd: TImage
             Left = 5
             Top = 5
             Width = 424
@@ -37988,6 +37989,7 @@ object GridForm: TGridForm
               D5E2A658AFC9E0BC2F43EDF49688BD88CBCB298B8FCE469945DD78E213E17E7C
               36D2BC31E1FB90CC6282669034A16CB3D0849F441EC7DEFF3FE0B64770157D97
               2D0000000049454E44AE426082}
+            OnClick = ImgServalNoAddClick
             ExplicitLeft = 6
           end
           object Panel4: TPanel

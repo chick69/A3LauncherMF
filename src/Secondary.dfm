@@ -500,6 +500,7 @@ object DetailForm: TDetailForm
         Height = 17
         Caption = 'Enable HT'
         TabOrder = 0
+        OnClick = CBEnabledHTClick
       end
       object CBNoSplash: TCheckBox
         Left = 32
@@ -538,6 +539,7 @@ object DetailForm: TDetailForm
         Width = 145
         Height = 27
         TabOrder = 5
+        OnChange = SELNBCORESChange
       end
       object CBNbEXthreads: TComboBox
         Left = 188
@@ -545,6 +547,7 @@ object DetailForm: TDetailForm
         Width = 145
         Height = 27
         TabOrder = 6
+        OnChange = CBNbEXthreadsChange
       end
       object CBMALLOC: TComboBox
         Left = 188

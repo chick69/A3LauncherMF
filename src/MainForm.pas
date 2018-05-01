@@ -15,14 +15,14 @@ type
     GroupPanel1: TPanel;
     Label2: TLabel;
     FlowPanel1: TFlowPanel;
-    GroupPanel1_1: TPanel;
-    GroupPanel1_2: TPanel;
-    Image1: TImage;
-    Image2: TImage;
+    GPSERVALADDONS: TPanel;
+    GPARES: TPanel;
+    ImgServal: TImage;
+    ImgAres: TImage;
     Panel6: TPanel;
     Label5: TLabel;
-    GroupPanel1_3: TPanel;
-    Image3: TImage;
+    GPSERVALNOADDONS: TPanel;
+    ImgServalNoAdd: TImage;
     Panel4: TPanel;
     Label6: TLabel;
     GroupPanel2: TPanel;
@@ -81,11 +81,14 @@ type
     procedure Image7Click(Sender: TObject);
     procedure ImgParamClick(Sender: TObject);
     procedure Image5Click(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ImgServalNoAddClick(Sender: TObject);
+    procedure ImgServalClick(Sender: TObject);
+    procedure ImgAresClick(Sender: TObject);
   private
     { Déclarations privées }
     procedure AppBarResize;
     procedure AppBarShow(mode: integer);
+    procedure LanceServer(Server: Tserver);
 
   public
     { Déclarations publiques }
@@ -96,7 +99,6 @@ type
 
 var
   GridForm: TGridForm;
-  GameEnv : TGameEnv;
 
 implementation
 
@@ -132,11 +134,6 @@ begin
   AppBarShow(-1);
 end;
 
-procedure TGridForm.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-	GameEnv.Free;
-end;
-
 procedure TGridForm.FormGesture(Sender: TObject;
   const EventInfo: TGestureEventInfo; var Handled: Boolean);
 begin
@@ -159,9 +156,30 @@ end;
 
 procedure TGridForm.FormShow(Sender: TObject);
 begin
-	GameEnv := TGameEnv.create;
-  
   AppBarShow(0);
+  GameEnv.SetInfosToForm;
+
+end;
+
+procedure TGridForm.LanceServer (Server : Tserver);
+var ParamsB,ParamsT : string;
+    ExeName : string;
+    Addons : string;
+begin
+  if not Server.AddonsStatus  then
+  begin
+    MessageBox(application.handle,'Vous ne pouvez rejoindre ce serveur tant que vos mods ne sont pas à jour',Pchar(GridForm.Caption),MB_ICONSTOP or MB_OK);
+    exit;
+  end;
+  ParamsB := gameEnv.SetParams (Server);
+  ExeName := GameEnv.GetArma3Exe;
+  Addons  := gameEnv.SetAddons (Server);
+  if Addons <> '' then ParamsT := ParamsB + ' '+Addons
+                  else ParamsT := ParamsB;
+
+
+  ShellExecute (Application.Handle,'OPEN',Pchar(ExeName),PChar(ParamsT),Pchar(GameEnv.GameEmpl),SW_SHOWDEFAULT);
+
 end;
 
 procedure TGridForm.Image11Click(Sender: TObject);
@@ -187,12 +205,51 @@ begin
   ShellExecute (Application.Handle,'OPEN','http://mercenaires-francais.fr',nil,nil,SW_SHOWDEFAULT);
 end;
 
+procedure TGridForm.ImgAresClick(Sender: TObject);
+var II : integer;
+begin
+  for II := 0 to GameEnv.Servers.Count -1 do
+  begin
+    if TServer(GameEnv.Servers[II]).Name = 'ARES' then
+    begin
+      LanceServer (GameEnv.Servers[II]);
+      break;
+    end;
+  end;
+end;
+
 procedure TGridForm.ImgParamClick(Sender: TObject);
 begin
   if not Assigned(DetailForm) then
     DetailForm := TDetailForm.Create(Self);
   DetailForm.Show;
   DetailForm.BringToFront;
+end;
+
+procedure TGridForm.ImgServalClick(Sender: TObject);
+var II : integer;
+begin
+  for II := 0 to GameEnv.Servers.Count -1 do
+  begin
+    if TServer(GameEnv.Servers[II]).Name = 'SERVALA' then
+    begin
+      LanceServer (GameEnv.Servers[II]);
+      break;
+    end;
+  end;
+end;
+
+procedure TGridForm.ImgServalNoAddClick(Sender: TObject);
+var II : integer;
+begin
+  for II := 0 to GameEnv.Servers.Count -1 do
+  begin
+    if TServer(GameEnv.Servers[II]).Name = 'SERVAL' then
+    begin
+      LanceServer (GameEnv.Servers[II]);
+      break;
+    end;
+  end;
 end;
 
 procedure TGridForm.PickImageColor(img: TImage; AColor: TColor);

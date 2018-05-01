@@ -8,7 +8,8 @@ uses
   Secondary in '..\src\Secondary.pas' {DetailForm},
   UGestAddons in '..\src\UGestAddons.pas' {DetailAddons},
   UUtils in '..\src\UUtils.pas',
-  WinHttp_TLB in '..\src\WinHttp_TLB.pas';
+  WinHttp_TLB in '..\src\WinHttp_TLB.pas',
+  UaddonUtils in '..\src\UaddonUtils.pas';
 
 {$R *.res}
 

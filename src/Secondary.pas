@@ -66,6 +66,9 @@ type
     procedure SBSelRepertClick(Sender: TObject);
     procedure  SaveParams;
     procedure SelAddonsClick(Sender: TObject);
+    procedure CBEnabledHTClick(Sender: TObject);
+    procedure SELNBCORESChange(Sender: TObject);
+    procedure CBNbEXthreadsChange(Sender: TObject);
   private
   	NbCores : integer;
     { Déclarations privées }
@@ -277,11 +280,40 @@ begin
   end;
 end;
 
+procedure TDetailForm.SELNBCORESChange(Sender: TObject);
+begin
+  if SELNBCORES.ItemIndex <> 0 then
+  begin
+    CBEnabledHT.Checked := false;
+  end;
+end;
+
 procedure TDetailForm.BackToMainForm(Sender: TObject);
 begin
   SaveParams;
   Hide;
   GridForm.BringToFront;
+  GameEnv.InitAddonState;
+  GameEnv.SetAddonsState;
+  GameEnv.SetAddonsServerStatus;
+  GameEnv.SetInfosToForm;
+end;
+
+procedure TDetailForm.CBEnabledHTClick(Sender: TObject);
+begin
+  if CBEnabledHT.Checked then
+  begin
+    SELNBCORES.ItemIndex := 0;
+    CBNbEXthreads.ItemIndex := 0;
+  end;
+end;
+
+procedure TDetailForm.CBNbEXthreadsChange(Sender: TObject);
+begin
+  if CBNbEXthreads.ItemIndex <> 0 then
+  begin
+    CBEnabledHT.Checked  := false;
+  end;
 end;
 
 end.
