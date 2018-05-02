@@ -108,6 +108,8 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
+        <VerInfo_Build>1</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Mercenaires-Francais.fr;FileDescription=Launcher Arma 3 Mercenaires-Francais.fr;FileVersion=1.0.0.1;InternalName=A3LauncherMF;LegalCopyright=© Mercenaires-français;LegalTrademarks=Copyright Mercenaires Français 2018;OriginalFilename=A3LauncherMF.exe;ProductName=A3LauncherMF;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <Icon_MainIcon>..\images\A3LauncherMF_Icon.ico</Icon_MainIcon>
         <DCC_DcuOutput>C:\Projets\A3LauncherMF\dcu\</DCC_DcuOutput>
         <DCC_ExeOutput>C:\Projets\A3LauncherMF\bin\</DCC_ExeOutput>

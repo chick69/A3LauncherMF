@@ -336,9 +336,10 @@ begin
   result := '';
   for II := 0 to Server.fAddonList.Count -1 do
   begin
-    if result <> '' then result := result + '';
+    if result <> '' then result := result + ';' else result := '"-mod=';
     result := result + IncludeTrailingBackslash (GameEnv.fAddonsEmpl)+Server.fAddonList.Items[II].fname;
   end;
+  result := result + '"';
 end;
 
 procedure TGameEnv.SetAddonsServerStatus;

@@ -173,7 +173,7 @@ begin
   if Addons <> '' then ParamsT := ParamsB + ' '+Addons
                   else ParamsT := ParamsB;
 
-
+//   MessageBox(Application.handle,Pchar(ParamsT),Pchar(GridForm.Caption),MB_OK);
   ShellExecute (Application.Handle,'OPEN',Pchar(ExeName),PChar(ParamsT),Pchar(GameEnv.GameEmpl),SW_SHOWDEFAULT);
 
 end;
