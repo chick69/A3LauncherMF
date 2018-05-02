@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Actions, Vcl.ActnList,
   Vcl.Styles, Vcl.Themes, Vcl.Touch.GestureMgr, Vcl.Buttons
-  ,Vcl.FileCtrl, Vcl.CheckLst, Vcl.Grids,UUtils
+  ,Vcl.FileCtrl, Vcl.CheckLst, Vcl.Grids,UUtils, Vcl.ComCtrls, system.zip
   ;
 
 type
@@ -33,6 +33,8 @@ type
     GSARES: TDrawGrid;
     StateGreen: TImage;
     StateRed: TImage;
+    ServalPg: TProgressBar;
+    ServalAddonName: TLabel;
     procedure BackToMainForm(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -56,6 +58,7 @@ type
     procedure CalcCenter(TheRect: Trect; TheText: string; var PosX,
       PosY: integer);
     procedure CalcImgCenter(TheRect: Trect; var ORect: Trect);
+    procedure LanceMajAddons (NomServeur : string);
   public
     { Déclarations publiques }
     procedure redraw;
@@ -279,6 +282,58 @@ begin
   end;
 end;
 
+procedure TDetailAddons.LanceMajAddons(NomServeur: string);
+
+	procedure ExLanceMajAddOns (TheAddons : TaddonsList; AddonName : Tlabel; ProgressBar : TprogressBar);	
+  var II : integer;
+  		XX : TDownLoad;
+      ZZ : TZipFile;
+  begin
+    XX := TDownLoad.Create;
+    TRY
+      if GameEnv.AddonsEmpl = ''  then exit;
+      for II := 0 to TheAddons.Count -1 do
+      begin
+        if not TheAddons.Items[II].fOK  then
+        begin
+          if XX.GetAddonsFromServeur(TheAddons.Items[II].ffile, AddonName, ProgressBar) then
+          begin
+ 						if DirectoryExists(IncludeTrailingBackslash (GameEnv.AddonsEmpl)+TheAddons.Items[II].fname) then
+            begin
+              RemoveDir(IncludeTrailingBackslash (GameEnv.AddonsEmpl)+TheAddons.Items[II].fname);
+            end;
+					  ZZ := TZipFile.Create;  
+            TRY        
+            	ZZ.Open(IncludeTrailingBackslash(LocalGetTempPath)+TheAddons.Items[II].ffile,zmRead);
+            	ZZ.ExtractAll(GameEnv.AddonsEmpl) 
+            FINALLY
+              ZZ.Free;
+            END;
+          end else break;
+        end;
+      end;
+    FINALLY
+			XX.Free;
+    END;
+  end;
+  
+var II : integer;
+begin
+  for II  := 0 to GameEnv.Servers.Count -1 do
+  begin
+  	if GameEnv.Servers.items[II].Name = NomServeur  then
+    begin
+			ExLanceMajAddOns (GameEnv.Servers.items[II].LocalAddons,ServalAddonName,ServalPg);			    
+    end;
+  end;
+
+  GameEnv.InitAddonState;
+  GameEnv.SetAddonsState;
+  GameEnv.SetAddonsServerStatus;
+  GameEnv.SetInfosToForm;
+  
+end;
+
 procedure TDetailAddons.redraw;
 var II : integer;
 begin
@@ -326,17 +381,19 @@ begin
 end;
 
 procedure TDetailAddons.SERVALUPDATEClick(Sender: TObject);
+var XX : Integer;
 begin
   if GameEnv.AddonsEmpl ='' then
   begin
     MessageBox(application.Handle,'Veuillez définir un emplacement pour les addons',PChar(GridForm.caption),MB_ICONERROR or MB_OK);
     exit;
   end;
-  if MessageBox (application.Handle,'Confirmez-vous la mise à jour des addons ?',PChar(GridForm.caption),MB_ICONQUESTION or MB_OKCANCEL) = MB_OK then
+  XX :=  MessageBox (application.Handle,'Confirmez-vous la mise à jour des addons ?',PChar(GridForm.caption),MB_ICONQUESTION or MB_OKCANCEL);
+
+  if XX = 1 then
   begin
-
+  	LanceMajAddons('SERVALA');
   end;
-
 end;
 
 procedure TDetailAddons.SetForm;

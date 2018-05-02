@@ -12395,14 +12395,35 @@ object DetailAddons: TDetailAddons
           48)
         object SERVALUPDATE: TSpeedButton
           Left = 632
-          Top = 0
+          Top = 1
           Width = 144
           Height = 48
           Anchors = [akTop, akRight]
           Caption = 'Mise '#224' jour'
           Flat = True
           OnClick = SERVALUPDATEClick
-          ExplicitLeft = 672
+        end
+        object ServalAddonName: TLabel
+          Left = 5
+          Top = 18
+          Width = 28
+          Height = 15
+          Caption = 'XXXX'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Calibri'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Visible = False
+        end
+        object ServalPg: TProgressBar
+          Left = 312
+          Top = 17
+          Width = 305
+          Height = 17
+          TabOrder = 0
+          Visible = False
         end
       end
       object Panel5: TPanel

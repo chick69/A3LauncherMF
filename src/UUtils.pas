@@ -6,7 +6,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.Actions, Vcl.ActnList,
   Vcl.Styles, Vcl.Themes, Vcl.Touch.GestureMgr, Vcl.Buttons, Registry
-  ,Vcl.FileCtrl,System.IniFiles,XMLDOC, XMLIntf,Secondary,WinHttp_tlb,IdHttp,UaddonUtils,VCL.grids
+  ,Vcl.FileCtrl,System.IniFiles,XMLDOC, XMLIntf,Secondary,WinHttp_tlb,IdHttp,UaddonUtils,VCL.grids,VCL.comCtrls,IdComponent
   ;
 
 const
@@ -131,6 +131,18 @@ type
     function SetAddons (Server : Tserver) : string;
   end;
 
+  TDownLoad = class(Tobject)
+  private
+  	IdHTTP1: TIdHTTP;
+  	AddonName : Tlabel;
+    ProgressBar : TProgressBar;
+    
+    procedure IdHTTPWork(ASender: TObject; AWorkMode: TWorkMode;AWorkCount: Int64);
+    procedure IdHTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode;AWorkCountMax: Int64);
+  public
+		function GetAddonsFromServeur( TheFile : string; TheAddonName : Tlabel; TheProgressBar : TprogressBar) : boolean;    
+  end;
+
 function GetSpecialFolder(folder:string) :string;
 function SelectionneRepert (RepertDepart : string) : string;
 function LocalGetTempPath: string;
@@ -163,6 +175,59 @@ begin
     Reg.Free;
   end;
   result := res;
+end;
+
+procedure TDownLoad.IdHTTPWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+begin
+  ProgressBar.Max := AWorkCountMax;
+  ProgressBar.Position := 0;
+end;
+
+procedure TDownLoad.IdHTTPWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  ProgressBar.Position := AWorkCount;
+end;
+
+function TDownLoad.GetAddonsFromServeur( TheFile : string; TheAddonName : Tlabel; TheProgressBar : TprogressBar) : boolean;    
+var
+  Stream: TMemoryStream;
+  Url, FileName: String;
+begin
+	result := false;
+  Url := 'http://mercenaires-francais.fr/Addons/repo/'+TheFile;
+  Filename :=  IncludeTrailingBackslash(LocalGetTempPath)+TheFile;
+
+  IdHTTP1 := TIdHTTP.Create(Application);
+  if (TheAddonName <> nil) and (TheProgressBar <> nil) then
+  begin
+  	AddonName := TheAddonName;
+    ProgressBar := TheProgressBar;
+    //
+    AddOnName.Caption := TheFile; AddonName.Visible := true;
+    ProgressBar.Visible := true;
+    AddonName.Parent.Refresh;
+    idHttp1.OnWorkBegin := IdHttpWorkBegin;
+    idHttp1.OnWork := IdHTTPWork;
+  end;
+  
+  Stream := TMemoryStream.Create;
+  try
+    TRY
+      IdHTTP1.Get(Url, Stream);
+      Stream.SaveToFile(FileName);
+      result := true;
+    EXCEPT
+      MessageBox (Application.Handle,'Récupération de l''addon impossible','Connection Serveur MF',MB_ICONEXCLAMATION or MB_OK);
+    END;
+  finally
+    Stream.Free;
+    IdHTTP1.Free;
+    if (TheAddonName <> nil) and (TheProgressBar <> nil) then
+    begin
+      TheAddonName.Visible := false;
+      TheProgressBar.Visible := false;
+    end;
+  end;
 end;
 
 function TGameEnv.GetGameRepert : string;
