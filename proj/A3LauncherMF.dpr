@@ -9,7 +9,8 @@ uses
   UGestAddons in '..\src\UGestAddons.pas' {DetailAddons},
   UUtils in '..\src\UUtils.pas',
   WinHttp_TLB in '..\src\WinHttp_TLB.pas',
-  UaddonUtils in '..\src\UaddonUtils.pas';
+  UaddonUtils in '..\src\UaddonUtils.pas',
+  UGetPasswd in '..\src\UGetPasswd.pas' {fGetPassword};
 
 {$R *.res}
 

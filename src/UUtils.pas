@@ -53,12 +53,14 @@ type
     fStatus : boolean;
     fAddonStatus : boolean;
     fWithAddons : boolean;
+    fWithPassWord : boolean;
     fAddonList : TaddonsList;
     fGameServer : TGameServer;
   public
 		property Name : string read fName write fName;
     property Status : boolean read fStatus write fStatus;
     property WithAddons : boolean read fWithAddons write fWithAddons;
+    property WithPassword : boolean read fWithPassWord;
     property LocalAddons : TaddonsList read fAddonList;
     property AddonsStatus : boolean read fAddonStatus;
     constructor create;
@@ -125,7 +127,7 @@ type
     procedure SetAddonsState;
     procedure SetAddonsServerStatus;
     function GetArma3Exe : string;
-    function SetParams (Server : Tserver) : string;
+    function SetParams (Server : Tserver; ThePassword : string) : string;
     function SetAddons (Server : Tserver) : string;
   end;
 
@@ -356,6 +358,7 @@ begin
         begin
           OSerVer := TServer.Create;
           Oserver.fWithAddons := false;
+          Oserver.fWithPassWord := false;
           fServers.Add(Oserver);
         end;
         N1 := SV.ChildNodes.Get(II);
@@ -365,6 +368,9 @@ begin
         end else if N1.NodeName = 'Adress' then
         begin
           OSerVer.fAdress := N1.NodeValue;
+        end else if N1.NodeName = 'Password' then
+        begin
+          OSerVer.fWithPassWord := (N1.NodeValue=1);
         end else if N1.NodeName = 'Port' then
         begin
           OSerVer.fPort := N1.NodeValue;
@@ -629,12 +635,17 @@ begin
   // -- Addons form
 end;
 
-function TGameEnv.SetParams(Server: Tserver): string;
+function TGameEnv.SetParams(Server: Tserver; ThePassword : string): string;
 begin
   result := '';
   if server.fAdress <> '' then
   begin
     result := '-connect='+Server.fAdress;
+  end;
+  if ThePassword <> '' then
+  begin
+    if result <> '' then result := result + ' ';
+    result := '-password='+ThePassword;
   end;
   if server.fPort <> '' then
   begin

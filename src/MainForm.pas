@@ -88,7 +88,8 @@ type
     { Déclarations privées }
     procedure AppBarResize;
     procedure AppBarShow(mode: integer);
-    procedure LanceServer(Server: Tserver);
+    procedure LanceServer(Server: Tserver; ThePassword : string);
+    procedure GetPassword(var ThePasswd: string);
 
   public
     { Déclarations publiques }
@@ -104,7 +105,7 @@ implementation
 
 {$R *.dfm}
 
-uses Secondary, UGestAddons;
+uses Secondary, UGestAddons, UgetPasswd;
 
 const
   AppBarHeight = 75;
@@ -161,17 +162,12 @@ begin
 
 end;
 
-procedure TGridForm.LanceServer (Server : Tserver);
+procedure TGridForm.LanceServer (Server : Tserver; ThePassword : string);
 var ParamsB,ParamsT : string;
     ExeName : string;
     Addons : string;
 begin
-  if not Server.AddonsStatus  then
-  begin
-    MessageBox(application.handle,'Vous ne pouvez rejoindre ce serveur tant que vos mods ne sont pas à jour',Pchar(GridForm.Caption),MB_ICONSTOP or MB_OK);
-    exit;
-  end;
-  ParamsB := gameEnv.SetParams (Server);
+  ParamsB := gameEnv.SetParams (Server,ThePassword);
   ExeName := GameEnv.GetArma3Exe;
   Addons  := gameEnv.SetAddons (Server);
   if Addons <> '' then ParamsT := ParamsB + ' '+Addons
@@ -207,12 +203,22 @@ end;
 
 procedure TGridForm.ImgAresClick(Sender: TObject);
 var II : integer;
+		ThePasswd : string;
 begin
   for II := 0 to GameEnv.Servers.Count -1 do
   begin
+    if not TServer(GameEnv.Servers[II]).AddonsStatus  then
+    begin
+      MessageBox(application.handle,'Vous ne pouvez rejoindre ce serveur tant que vos mods ne sont pas à jour',Pchar(GridForm.Caption),MB_ICONSTOP or MB_OK);
+      exit;
+    end;
+    if TServer(GameEnv.Servers[II]).WithPassword then
+    begin
+      GetPassword (ThePasswd);     
+    end;
     if TServer(GameEnv.Servers[II]).Name = 'ARES' then
     begin
-      LanceServer (GameEnv.Servers[II]);
+      LanceServer (GameEnv.Servers[II],ThePasswd);
       break;
     end;
   end;
@@ -226,14 +232,38 @@ begin
   DetailForm.BringToFront;
 end;
 
+procedure  TGridForm.GetPassword (var ThePasswd : string);     
+var XX: TfGetPassword;
+begin
+  XX := TfGetPassword.Create(application);
+  TRY
+    XX.ShowModal;  
+  FINALLY
+    if XX.PasswordSais <> '' then ThePasswd := XX.PasswordSais;
+    XX.Free;
+  END;
+end;
+
+
 procedure TGridForm.ImgServalClick(Sender: TObject);
+
 var II : integer;
+		ThePasswd : string;
 begin
   for II := 0 to GameEnv.Servers.Count -1 do
   begin
     if TServer(GameEnv.Servers[II]).Name = 'SERVALA' then
     begin
-      LanceServer (GameEnv.Servers[II]);
+      if not TServer(GameEnv.Servers[II]).AddonsStatus  then
+      begin
+        MessageBox(application.handle,'Vous ne pouvez rejoindre ce serveur tant que vos mods ne sont pas à jour',Pchar(GridForm.Caption),MB_ICONSTOP or MB_OK);
+        exit;
+      end;
+    	if TServer(GameEnv.Servers[II]).WithPassword then
+      begin
+ 				GetPassword (ThePasswd);     
+      end;
+      LanceServer (GameEnv.Servers[II],ThePasswd);
       break;
     end;
   end;
@@ -241,12 +271,22 @@ end;
 
 procedure TGridForm.ImgServalNoAddClick(Sender: TObject);
 var II : integer;
+		ThePasswd : string;
 begin
   for II := 0 to GameEnv.Servers.Count -1 do
   begin
     if TServer(GameEnv.Servers[II]).Name = 'SERVAL' then
     begin
-      LanceServer (GameEnv.Servers[II]);
+      if not TServer(GameEnv.Servers[II]).AddonsStatus  then
+      begin
+        MessageBox(application.handle,'Vous ne pouvez rejoindre ce serveur tant que vos mods ne sont pas à jour',Pchar(GridForm.Caption),MB_ICONSTOP or MB_OK);
+        exit;
+      end;
+    	if TServer(GameEnv.Servers[II]).WithPassword then
+      begin
+ 				GetPassword (ThePasswd);     
+      end;
+      LanceServer (GameEnv.Servers[II],ThePasswd);
       break;
     end;
   end;

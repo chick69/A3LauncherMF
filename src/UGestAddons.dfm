@@ -12370,7 +12370,7 @@ object DetailAddons: TDetailAddons
     object Panel2: TPanel
       Left = 48
       Top = 22
-      Width = 775
+      Width = 780
       Height = 394
       BevelOuter = bvNone
       Caption = 'Panel2'
@@ -12378,7 +12378,7 @@ object DetailAddons: TDetailAddons
       object Panel4: TPanel
         Left = 0
         Top = 346
-        Width = 775
+        Width = 780
         Height = 48
         Align = alBottom
         BevelOuter = bvNone
@@ -12389,12 +12389,12 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
-        ExplicitWidth = 1057
+        ExplicitWidth = 775
         DesignSize = (
-          775
+          780
           48)
         object SERVALUPDATE: TSpeedButton
-          Left = 627
+          Left = 632
           Top = 0
           Width = 144
           Height = 48
@@ -12408,7 +12408,7 @@ object DetailAddons: TDetailAddons
       object Panel5: TPanel
         Left = 0
         Top = 0
-        Width = 775
+        Width = 780
         Height = 41
         Align = alTop
         BevelOuter = bvNone
@@ -12420,12 +12420,12 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
-        ExplicitWidth = 1057
+        ExplicitWidth = 775
       end
       object GSSERVAL: TDrawGrid
         Left = 0
         Top = 41
-        Width = 775
+        Width = 780
         Height = 305
         Align = alClient
         ColCount = 2
@@ -12435,7 +12435,7 @@ object DetailAddons: TDetailAddons
         ScrollBars = ssVertical
         TabOrder = 2
         OnDrawCell = GSSERVALDrawCell
-        ExplicitTop = 35
+        ExplicitWidth = 775
         ColWidths = (
           64
           66)
@@ -12444,7 +12444,7 @@ object DetailAddons: TDetailAddons
     object Panel3: TPanel
       Left = 48
       Top = 430
-      Width = 775
+      Width = 780
       Height = 372
       BevelOuter = bvNone
       Caption = 'Panel2'
@@ -12452,7 +12452,7 @@ object DetailAddons: TDetailAddons
       object Panel6: TPanel
         Left = 0
         Top = 324
-        Width = 775
+        Width = 780
         Height = 48
         Align = alBottom
         BevelOuter = bvNone
@@ -12463,12 +12463,12 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
-        ExplicitWidth = 1057
+        ExplicitWidth = 775
         DesignSize = (
-          775
+          780
           48)
         object ARESUPDATE: TSpeedButton
-          Left = 629
+          Left = 634
           Top = 0
           Width = 144
           Height = 48
@@ -12482,7 +12482,7 @@ object DetailAddons: TDetailAddons
       object Panel7: TPanel
         Left = 0
         Top = 0
-        Width = 775
+        Width = 780
         Height = 41
         Align = alTop
         BevelOuter = bvNone
@@ -12494,12 +12494,12 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
-        ExplicitWidth = 1057
+        ExplicitWidth = 775
       end
       object GSARES: TDrawGrid
         Left = 0
         Top = 41
-        Width = 775
+        Width = 780
         Height = 283
         Align = alClient
         ColCount = 2
@@ -12509,8 +12509,7 @@ object DetailAddons: TDetailAddons
         ScrollBars = ssVertical
         TabOrder = 2
         OnDrawCell = GSARESDrawCell
-        ExplicitTop = 35
-        ExplicitWidth = 826
+        ExplicitWidth = 775
       end
     end
   end
