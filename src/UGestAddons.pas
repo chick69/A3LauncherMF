@@ -302,13 +302,20 @@ procedure TDetailAddons.LanceMajAddons(NomServeur: string);
             begin
               RemoveDir(IncludeTrailingBackslash (GameEnv.AddonsEmpl)+TheAddons.Items[II].fname);
             end;
-					  ZZ := TZipFile.Create;  
+            if AddonName<> nil then
+            begin
+              AddonName.Visible := true;
+              AddonName.Caption := 'Décompression';
+            	AddonName.Parent.Refresh;
+            end;
+					  ZZ := TZipFile.Create;
             TRY        
             	ZZ.Open(IncludeTrailingBackslash(LocalGetTempPath)+TheAddons.Items[II].ffile,zmRead);
             	ZZ.ExtractAll(GameEnv.AddonsEmpl) 
             FINALLY
               ZZ.Free;
             END;
+            if AddonName<> nil then AddonName.visible := false;
           end else break;
         end;
       end;
