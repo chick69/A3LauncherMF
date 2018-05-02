@@ -35,6 +35,8 @@ type
     StateRed: TImage;
     ServalPg: TProgressBar;
     ServalAddonName: TLabel;
+    AresAddonName: TLabel;
+    AresPg: TProgressBar;
     procedure BackToMainForm(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -59,6 +61,7 @@ type
       PosY: integer);
     procedure CalcImgCenter(TheRect: Trect; var ORect: Trect);
     procedure LanceMajAddons (NomServeur : string);
+    procedure RemoveLeDir(Therepert: string);
   public
     { Déclarations publiques }
     procedure redraw;
@@ -103,13 +106,19 @@ begin
 end;
 
 procedure TDetailAddons.ARESUPDATEClick(Sender: TObject);
+var XX : Integer;
 begin
   if GameEnv.AddonsEmpl ='' then
   begin
     MessageBox(application.Handle,'Veuillez définir un emplacement pour les addons',PChar(GridForm.caption),MB_ICONERROR or MB_OK);
     exit;
   end;
+  XX :=  MessageBox (application.Handle,'Confirmez-vous la mise à jour des addons ?',PChar(GridForm.caption),MB_ICONQUESTION or MB_OKCANCEL);
 
+  if XX = 1 then
+  begin
+  	LanceMajAddons('ARES');
+  end;
 end;
 
 procedure TDetailAddons.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -282,6 +291,28 @@ begin
   end;
 end;
 
+procedure TDetailAddons.RemoveLeDir (Therepert : string);
+var Info : TSearchRec;
+begin
+  If FindFirst(IncludeTrailingBackslash (Therepert)+'*.*',faAnyFile,Info)=0 Then
+  begin
+    repeat
+      If (info.Name<>'.')And(info.Name<>'..') then
+      begin
+        If not ((Info.Attr And faDirectory)=0) then
+        begin
+          RemoveLeDir (IncludeTrailingBackslash (Therepert)+Info.Name);
+          RemoveDir(IncludeTrailingBackslash (Therepert)+Info.Name);
+        end else
+        begin
+          DeleteFile(IncludeTrailingBackslash (Therepert)+Info.name);
+        end;
+      end;
+    until FindNext (Info)<>0;
+  end;
+  FindClose(Info);
+end;
+
 procedure TDetailAddons.LanceMajAddons(NomServeur: string);
 
 	procedure ExLanceMajAddOns (TheAddons : TaddonsList; AddonName : Tlabel; ProgressBar : TprogressBar);	
@@ -300,6 +331,7 @@ procedure TDetailAddons.LanceMajAddons(NomServeur: string);
           begin
  						if DirectoryExists(IncludeTrailingBackslash (GameEnv.AddonsEmpl)+TheAddons.Items[II].fname) then
             begin
+              RemoveLeDir(IncludeTrailingBackslash (GameEnv.AddonsEmpl)+TheAddons.Items[II].fname);
               RemoveDir(IncludeTrailingBackslash (GameEnv.AddonsEmpl)+TheAddons.Items[II].fname);
             end;
             if AddonName<> nil then
@@ -330,7 +362,14 @@ begin
   begin
   	if GameEnv.Servers.items[II].Name = NomServeur  then
     begin
-			ExLanceMajAddOns (GameEnv.Servers.items[II].LocalAddons,ServalAddonName,ServalPg);			    
+      if NomServeur = 'SERVALA' then
+      begin
+			  ExLanceMajAddOns (GameEnv.Servers.items[II].LocalAddons,ServalAddonName,ServalPg);
+      end else if NomServeur = 'ARES' then
+      begin
+			  ExLanceMajAddOns (GameEnv.Servers.items[II].LocalAddons,AresAddonName,AresPg);
+      end;
+
     end;
   end;
 

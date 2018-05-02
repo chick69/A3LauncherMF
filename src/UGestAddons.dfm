@@ -12389,7 +12389,6 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
-        ExplicitWidth = 775
         DesignSize = (
           780
           48)
@@ -12441,7 +12440,6 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
-        ExplicitWidth = 775
       end
       object GSSERVAL: TDrawGrid
         Left = 0
@@ -12456,7 +12454,6 @@ object DetailAddons: TDetailAddons
         ScrollBars = ssVertical
         TabOrder = 2
         OnDrawCell = GSSERVALDrawCell
-        ExplicitWidth = 775
         ColWidths = (
           64
           66)
@@ -12484,7 +12481,6 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
-        ExplicitWidth = 775
         DesignSize = (
           780
           48)
@@ -12498,6 +12494,28 @@ object DetailAddons: TDetailAddons
           Flat = True
           OnClick = ARESUPDATEClick
           ExplicitLeft = 704
+        end
+        object AresAddonName: TLabel
+          Left = 13
+          Top = 18
+          Width = 28
+          Height = 15
+          Caption = 'XXXX'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Calibri'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Visible = False
+        end
+        object AresPg: TProgressBar
+          Left = 323
+          Top = 17
+          Width = 305
+          Height = 17
+          TabOrder = 0
+          Visible = False
         end
       end
       object Panel7: TPanel
@@ -12515,7 +12533,6 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
-        ExplicitWidth = 775
       end
       object GSARES: TDrawGrid
         Left = 0
@@ -12530,13 +12547,12 @@ object DetailAddons: TDetailAddons
         ScrollBars = ssVertical
         TabOrder = 2
         OnDrawCell = GSARESDrawCell
-        ExplicitWidth = 775
       end
     end
   end
   object GestureManager1: TGestureManager
-    Left = 48
-    Top = 920
+    Left = 920
+    Top = 696
     GestureData = <
       item
         Control = Owner
@@ -12548,8 +12564,8 @@ object DetailAddons: TDetailAddons
       end>
   end
   object ActionList1: TActionList
-    Left = 160
-    Top = 920
+    Left = 1032
+    Top = 696
     object Action1: TAction
       Caption = 'Action1'
       OnExecute = Action1Execute
