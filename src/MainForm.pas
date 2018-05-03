@@ -172,7 +172,7 @@ begin
   Addons  := gameEnv.SetAddons (Server);
   if Addons <> '' then ParamsT := ParamsB + ' '+Addons
                   else ParamsT := ParamsB;
-
+  application.Minimize;
 //   MessageBox(Application.handle,Pchar(ParamsT),Pchar(GridForm.Caption),MB_OK);
   ShellExecute (Application.Handle,'OPEN',Pchar(ExeName),PChar(ParamsT),Pchar(GameEnv.GameEmpl),SW_SHOWDEFAULT);
 
@@ -215,6 +215,7 @@ begin
     if TServer(GameEnv.Servers[II]).WithPassword then
     begin
       GetPassword (ThePasswd);     
+      if ThePasswd = '' then exit;
     end;
     if TServer(GameEnv.Servers[II]).Name = 'ARES' then
     begin
@@ -262,7 +263,9 @@ begin
     	if TServer(GameEnv.Servers[II]).WithPassword then
       begin
  				GetPassword (ThePasswd);     
+        if ThePasswd = '' then exit;
       end;
+
       LanceServer (GameEnv.Servers[II],ThePasswd);
       break;
     end;
