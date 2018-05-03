@@ -69,6 +69,7 @@ type
     ServalStateGreen: TImage;
     AresStateRed: TImage;
     AresStateGreen: TImage;
+    Image1: TImage;
     procedure ScrollBox2Resize(Sender: TObject);
     procedure Image11Click(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -84,6 +85,7 @@ type
     procedure ImgServalNoAddClick(Sender: TObject);
     procedure ImgServalClick(Sender: TObject);
     procedure ImgAresClick(Sender: TObject);
+    procedure Image1Click(Sender: TObject);
   private
     { Déclarations privées }
     procedure AppBarResize;
@@ -181,6 +183,11 @@ end;
 procedure TGridForm.Image11Click(Sender: TObject);
 begin
   Application.Terminate;
+end;
+
+procedure TGridForm.Image1Click(Sender: TObject);
+begin
+	Application.Minimize;
 end;
 
 procedure TGridForm.Image5Click(Sender: TObject);
