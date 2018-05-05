@@ -711,7 +711,7 @@ begin
   if ThePassword <> '' then
   begin
     if result <> '' then result := result + ' ';
-    result := '-password='+ThePassword;
+    result := result +  '-password='+ThePassword;
   end;
   if server.fPort <> '' then
   begin

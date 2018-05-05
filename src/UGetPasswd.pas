@@ -31,6 +31,7 @@ begin
   begin
     PasswordSais := MDP.Text;
   end;
+  close;
 end;
 
 end.

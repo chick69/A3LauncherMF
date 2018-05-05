@@ -46,9 +46,6 @@ object fGetPassword: TfGetPassword
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 8
-    ExplicitTop = 104
-    ExplicitWidth = 185
     object Button1: TButton
       Left = 272
       Top = 8
