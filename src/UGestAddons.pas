@@ -37,6 +37,13 @@ type
     ServalAddonName: TLabel;
     AresAddonName: TLabel;
     AresPg: TProgressBar;
+    Panel8: TPanel;
+    Panel9: TPanel;
+    SERVALMUPDATE: TSpeedButton;
+    ServalMaddonName: TLabel;
+    ServalMPG: TProgressBar;
+    Panel10: TPanel;
+    GSSERVALM: TDrawGrid;
     procedure BackToMainForm(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -51,7 +58,11 @@ type
       Rect: TRect; State: TGridDrawState);
     procedure SERVALUPDATEClick(Sender: TObject);
     procedure ARESUPDATEClick(Sender: TObject);
+    procedure SERVALMUPDATEClick(Sender: TObject);
+    procedure GSSERVALMDrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
   private
+    fServSERVALM : TServer;
     fServSERVAL : TServer;
     fServARES : TServer;
     { Déclarations privées }
@@ -291,6 +302,63 @@ begin
   end;
 end;
 
+procedure TDetailAddons.GSSERVALMDrawCell(Sender: TObject; ACol, ARow: Integer;Rect: TRect; State: TGridDrawState);
+
+  function GetAddon (Arow : integer) : TAddons;
+  begin
+    result := fServSERVALM.LocalAddons.Items[Arow-1];
+  end;
+
+var PosX,PosY : integer;
+    TheText : string;
+    TheAddon : TAddons;
+    TheImage : TImage;
+    sRect : Trect;
+begin
+  if (fServSERVALM = nil) or (GameEnv=nil) then exit;
+  //
+  with GSSERVALM do
+  begin
+    if Arow = 0 then
+    begin
+      if ACol = 0 then
+      begin
+        TheText := 'Addon';
+        canvas.Font.Style := [fsBold];
+        CalcCenter (Rect,TheText,PosX,POSY);
+        canvas.FillRect(Rect);
+        Canvas.TextOut(POSX, POSY, TheText);
+      end else
+      begin
+        TheText := 'Statut';
+        canvas.FillRect(Rect);
+        canvas.Font.Style := [fsBold];
+        CalcCenter (Rect,TheText,PosX,POSY);
+        Canvas.TextOut(POSX, POSY, TheText );
+      end;
+    end else
+    begin
+      TheAddon := GetAddon(Arow);
+      if ACol = 0 then
+      begin
+        TheText := TheAddon.fDesc;
+        canvas.Font.Style := [fsBold];
+        CalcCenter (Rect,TheText,PosX,POSY);
+        canvas.FillRect(Rect);
+        Canvas.TextOut(POSX, POSY, TheText);
+      end else
+      begin
+        if TheAddon.fOK  then TheImage := StateGreen else TheImage := StateRed;
+        //
+        canvas.FillRect(Rect);
+        canvas.Font.Style := [fsBold];
+        CalcImgCenter (Rect,SRect);
+        Canvas.StretchDraw (SRect, TheImage.Picture.Graphic );
+      end;
+    end;
+  end;
+end;
+
 procedure TDetailAddons.RemoveLeDir (Therepert : string);
 var Info : TSearchRec;
 begin
@@ -362,7 +430,10 @@ begin
   begin
   	if GameEnv.Servers.items[II].Name = NomServeur  then
     begin
-      if NomServeur = 'SERVALA' then
+      if NomServeur = 'SERVAL' then
+      begin
+			  ExLanceMajAddOns (GameEnv.Servers.items[II].LocalAddons,ServalMaddonName,ServalMPG);
+      end else if NomServeur = 'SERVALA' then
       begin
 			  ExLanceMajAddOns (GameEnv.Servers.items[II].LocalAddons,ServalAddonName,ServalPg);
       end else if NomServeur = 'ARES' then
@@ -384,21 +455,38 @@ procedure TDetailAddons.redraw;
 var II : integer;
 begin
   //
+  fServSERVALM := nil;
   fServSERVAL := nil;
   fServARES := nil;
   if GameEnv = nil then exit;
-  
+
   for II  := 0 to GameEnv.Servers.Count -1 do
   begin
     if GameEnv.Servers.Items[II].Name ='SERVALA' then
     begin
       fServSERVAL := GameEnv.Servers.Items[II];
     end;
+    if GameEnv.Servers.Items[II].Name ='SERVAL' then
+    begin
+      fServSERVALM := GameEnv.Servers.Items[II];
+    end;
     if GameEnv.Servers.Items[II].Name ='ARES' then
     begin
       fServARES := GameEnv.Servers.Items[II];
     end;
   end;
+  if fServSERVALM <>nil then
+  begin
+    GSSERVALM.RowCount := fServSERVALM.LocalAddons.Count +1;
+    GSSERVALM.ColWidths [0] := 70 * Canvas.TextWidth('W');
+    GSSERVALM.ColWidths [1] := 6 * Canvas.TextWidth('W');
+    SERVALMUPDATE.Enabled := not fServSERVALM.AddonsStatus;
+  end else
+  begin
+    GSSERVALM.RowCount := 1;
+    SERVALMUPDATE.Enabled := false;
+  end;
+  //
   if fServSERVAL <>nil then
   begin
     GSSERVAL.RowCount := fServSERVAL.LocalAddons.Count +1;
@@ -410,7 +498,7 @@ begin
     GSSERVAL.RowCount := 1;
     SERVALUPDATE.Enabled := false;
   end;
-
+  //
   if fServARES <>nil then
   begin
     GSARES.RowCount := fServARES.LocalAddons.Count +1;
@@ -422,8 +510,26 @@ begin
     GSARES.RowCount := 1;
     ARESUPDATE.Enabled := false;
   end;
+
+  GSSERVALM.refresh;
   GSSERVAL.refresh;
   GSARES.refresh;
+end;
+
+procedure TDetailAddons.SERVALMUPDATEClick(Sender: TObject);
+var XX : Integer;
+begin
+  if GameEnv.AddonsEmpl ='' then
+  begin
+    MessageBox(application.Handle,'Veuillez définir un emplacement pour les addons',PChar(GridForm.caption),MB_ICONERROR or MB_OK);
+    exit;
+  end;
+  XX :=  MessageBox (application.Handle,'Confirmez-vous la mise à jour des addons ?',PChar(GridForm.caption),MB_ICONQUESTION or MB_OKCANCEL);
+
+  if XX = 1 then
+  begin
+  	LanceMajAddons('SERVAL');
+  end;
 end;
 
 procedure TDetailAddons.SERVALUPDATEClick(Sender: TObject);

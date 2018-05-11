@@ -686,6 +686,11 @@ begin
   // -- Form principale
   for II := 0 to fservers.Count -1 do
   begin
+    if fservers.Items[II].fName = 'SERVAL' then
+    begin
+      GridForm.ServalRRed.Visible := not fservers.Items[II].fAddonStatus;
+      GridForm.ServalRgreen.Visible := fservers.Items[II].fAddonStatus;
+    end;
     if fservers.Items[II].fName = 'SERVALA' then
     begin
       GridForm.ServalStateRed.Visible := not fservers.Items[II].fAddonStatus;

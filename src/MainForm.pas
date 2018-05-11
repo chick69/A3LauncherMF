@@ -70,6 +70,8 @@ type
     AresStateRed: TImage;
     AresStateGreen: TImage;
     Image1: TImage;
+    ServalRgreen: TImage;
+    ServalRRed: TImage;
     procedure ScrollBox2Resize(Sender: TObject);
     procedure Image11Click(Sender: TObject);
     procedure FormResize(Sender: TObject);

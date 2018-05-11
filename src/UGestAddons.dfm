@@ -12440,6 +12440,7 @@ object DetailAddons: TDetailAddons
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
+        ExplicitTop = -5
       end
       object GSSERVAL: TDrawGrid
         Left = 0
@@ -12454,6 +12455,7 @@ object DetailAddons: TDetailAddons
         ScrollBars = ssVertical
         TabOrder = 2
         OnDrawCell = GSSERVALDrawCell
+        ExplicitTop = 36
         ColWidths = (
           64
           66)
@@ -12547,6 +12549,98 @@ object DetailAddons: TDetailAddons
         ScrollBars = ssVertical
         TabOrder = 2
         OnDrawCell = GSARESDrawCell
+      end
+    end
+    object Panel8: TPanel
+      Left = 856
+      Top = 22
+      Width = 780
+      Height = 394
+      BevelOuter = bvNone
+      Caption = 'Panel2'
+      TabOrder = 2
+      object Panel9: TPanel
+        Left = 0
+        Top = 346
+        Width = 780
+        Height = 48
+        Align = alBottom
+        BevelOuter = bvNone
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Calibri'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        DesignSize = (
+          780
+          48)
+        object SERVALMUPDATE: TSpeedButton
+          Left = 632
+          Top = 1
+          Width = 144
+          Height = 48
+          Anchors = [akTop, akRight]
+          Caption = 'Mise '#224' jour'
+          Flat = True
+          OnClick = SERVALMUPDATEClick
+        end
+        object ServalMaddonName: TLabel
+          Left = 5
+          Top = 18
+          Width = 28
+          Height = 15
+          Caption = 'XXXX'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Calibri'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Visible = False
+        end
+        object ServalMPG: TProgressBar
+          Left = 312
+          Top = 17
+          Width = 305
+          Height = 17
+          TabOrder = 0
+          Visible = False
+        end
+      end
+      object Panel10: TPanel
+        Left = 0
+        Top = 0
+        Width = 780
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        Caption = 'SERVAL Minimum'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Calibri'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+      end
+      object GSSERVALM: TDrawGrid
+        Left = 0
+        Top = 41
+        Width = 780
+        Height = 305
+        Align = alClient
+        ColCount = 2
+        DefaultRowHeight = 28
+        FixedCols = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
+        ScrollBars = ssVertical
+        TabOrder = 2
+        OnDrawCell = GSSERVALMDrawCell
+        ColWidths = (
+          64
+          66)
       end
     end
   end
